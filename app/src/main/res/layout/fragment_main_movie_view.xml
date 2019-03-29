@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_background"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/movieImageView_Main"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6.5"
+        android:layout_margin="40dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3.5"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/movieOrderAndTitle_Main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/White"
+            android:textSize="@dimen/movieTitle" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/home_slider1" />
+
+        <TextView
+            android:id="@+id/movieInfo_Main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/White"
+            android:textSize="@dimen/movieInfo" />
+
+        <Button
+            android:id="@+id/detailViewBut_Main"
+            android:layout_width="180dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/main_detail_view_but"
+            android:text="@string/detailView"
+            android:textColor="@color/White"
+            android:textSize="@dimen/detailViewBut" />
+    </LinearLayout>
+
+
+</LinearLayout>

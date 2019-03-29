@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+
+    <color name="Dark">#000000</color>
+    <color name="White">#FFFFFF</color>
+    <color name="Gray">#E0E0E0</color>
+    <color name="DarkGray">#5A5A5A</color>
+    <color name="Orange">#FF6250</color>
+    <color name="Apricot">#FE9A2E</color>
+    <color name="Purple">#771AEE</color>
+    
+    
+    <!--Gradient-->
+    <color name="light_blue_gradient">#7288DB</color>
+    <color name="middle_blue_gradient">#3250B4</color>
+    <color name="deep_blue_gradient">#254095</color>
+
+    <!--toobar-->
+    <color name="toolbar_color">#213D8D</color>
+</resources>
