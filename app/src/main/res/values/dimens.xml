@@ -9,4 +9,6 @@
     <dimen name="movieTitle">24sp</dimen>
     <dimen name="movieInfo">16sp</dimen>
     <dimen name="detailViewBut">20sp</dimen>
+
+    <dimen name="movieRating">30dp</dimen>
 </resources>

@@ -1,10 +1,7 @@
 package com.practice.mymovie;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,45 +10,51 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.practice.mymovie.Adapter.MainViewPagerAdapter;
-import com.practice.mymovie.ViewPagerFragment.MainMovieViewFragment;
+import com.practice.mymovie.Interface.DataKey;
+import com.practice.mymovie.MainViewPager.MainMovieViewFragment;
+import com.practice.mymovie.MainViewPager.MainViewPagerFragment;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DataKey {
+    private MainViewPagerFragment mainViewPagerFragment;
 
-    private ArrayList<MainMovieViewFragment> movieList;
-    private static final String[] movieTitleList = {"군도", "공조","더 킹", "레지던트 이블", "럭키", "아수라"};
-    private static final String[] ticketPercentsList = {"33.4","20.9","15.9","6.8","4.7","3.9"};
-    private static final int[] viewingClassList = {0,15,19,15,12,0};
-    private static final String[] movieDateList = {"상영중","D-1", "상영중","D-6","상영중","상영중"};
-
+    //fragment에서 onBackPressed를 받기 위해 사용
+    private onKeyBackPressedListener mOnKeyBackPressedListener;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        movieList = new ArrayList<>();
-        loadMovieList();
+
+        mainViewPagerFragment = new MainViewPagerFragment();
         initView();
     }
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (mOnKeyBackPressedListener != null) {
+            mOnKeyBackPressedListener.onBackKey();
         } else {
-            super.onBackPressed();
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
         }
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+//        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -77,13 +80,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_movieList) {
-            // Handle the camera action
+            Toast.makeText(this,"nav_menu 영화 목록 메뉴 클릭 됨",Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_movieAPI) {
-
+            Toast.makeText(this,"nav_menu 영화 API 메뉴 클릭 됨",Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_reservation) {
-
+            Toast.makeText(this,"nav_menu 예매하기 메뉴 클릭 됨",Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_userSetting) {
-
+            Toast.makeText(this,"nav_menu 사용자 설정 메뉴 클릭 됨",Toast.LENGTH_SHORT).show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -92,7 +95,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initView() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -104,26 +107,37 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        ViewPager viewPager = findViewById(R.id.movieListViewPager_Main);
-
-        MainViewPagerAdapter adapter = new MainViewPagerAdapter(getSupportFragmentManager(),movieList);
-        viewPager.setAdapter(adapter);
+        //영화 목록 ViewPager 가져오기
+        getSupportFragmentManager().beginTransaction().add(R.id.flContainer_Main, mainViewPagerFragment).commit();
     }
 
-    private void loadMovieList() {
-        for(int i = 0 ; i < 6 ; i++) {
-            MainMovieViewFragment fragment = new MainMovieViewFragment();
+    public void goToDetailView(String movieTitle) {
+        MovieDetailViewFragment movieDetailViewFragment = new MovieDetailViewFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(MOVIE_TITLE, movieTitle);
+        movieDetailViewFragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction().replace(R.id.flContainer_Main, movieDetailViewFragment).commit();
 
-            Bundle bundle = new Bundle();
-            bundle.putInt("movieOrder",i+1);
-            bundle.putString("movieTitle",movieTitleList[i]);
-            bundle.putString("ticketPercents",ticketPercentsList[i]);
-            bundle.putInt("viewingClass",viewingClassList[i]);
-            bundle.putString("movieDate",movieDateList[i]);
-            if(fragment!=null){
-                fragment.setArguments(bundle);
-                movieList.add(fragment);
-            }
-        }
+        toolbar.setTitle(getString(R.string.main_toolbar_detail));
     }
+
+    public void backToMainView(int order) {
+        //메인 뷰로 돌아온다.
+        mainViewPagerFragment = new MainViewPagerFragment();
+        //bundle에 영화 상세 화면 순서를 넣어주어서 돌아왔을 때 viewpager가 해당 영화 페이지를 보여주게 한다.
+        Bundle bundle = new Bundle();
+        bundle.putInt(MOVIE_ORDER, order);
+        mainViewPagerFragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction().replace(R.id.flContainer_Main, mainViewPagerFragment).commit();
+        toolbar.setTitle(getString(R.string.main_toolbar_title));
+    }
+
+    public interface onKeyBackPressedListener {
+        void onBackKey();
+    }
+
+    public void setOnKeyBackPressedListener(onKeyBackPressedListener listener) {
+        mOnKeyBackPressedListener = listener;
+    }
+
 }

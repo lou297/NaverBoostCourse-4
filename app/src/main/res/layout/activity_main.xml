@@ -28,23 +28,11 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/movieListViewPager_Main"
+        <FrameLayout
+            android:id="@+id/flContainer_Main"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        </android.support.v4.view.ViewPager>
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
-            <!--&gt;-->
-            <!--<android.support.v4.view.ViewPager-->
-                <!--android:id="@+id/movieListViewPager_Main"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"/>-->
-        <!--</LinearLayout>-->
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 
     </android.support.design.widget.CoordinatorLayout>
