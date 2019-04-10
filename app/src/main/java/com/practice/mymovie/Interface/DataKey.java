@@ -7,4 +7,6 @@ public interface DataKey {
     String RATING = "RATING";
     String MOVIE_DATE = "MOVIE_DATE";
     String MOVIE_COMMENT_LIST = "MOVIE_COMMENT_LIST";
+    String MOVIE_LIST = "MOVIE_LIST";
+    String MOVIE = "MOVIE";
 }

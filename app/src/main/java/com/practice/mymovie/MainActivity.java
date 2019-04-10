@@ -1,23 +1,37 @@
 package com.practice.mymovie;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.practice.mymovie.Adapter.MainViewPagerAdapter;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.practice.mymovie.DataClass.ReadMovieList.MovieMain;
+import com.practice.mymovie.DataClass.ReadMovieList.ReadMovieList;
 import com.practice.mymovie.Interface.DataKey;
-import com.practice.mymovie.MainViewPager.MainMovieViewFragment;
 import com.practice.mymovie.MainViewPager.MainViewPagerFragment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DataKey {
@@ -34,6 +48,7 @@ public class MainActivity extends AppCompatActivity
 
         mainViewPagerFragment = new MainViewPagerFragment();
         initView();
+        startAppSetting();
     }
 
     @Override
@@ -80,13 +95,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_movieList) {
-            Toast.makeText(this,"nav_menu 영화 목록 메뉴 클릭 됨",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "nav_menu 영화 목록 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_movieAPI) {
-            Toast.makeText(this,"nav_menu 영화 API 메뉴 클릭 됨",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "nav_menu 영화 API 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_reservation) {
-            Toast.makeText(this,"nav_menu 예매하기 메뉴 클릭 됨",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "nav_menu 예매하기 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_userSetting) {
-            Toast.makeText(this,"nav_menu 사용자 설정 메뉴 클릭 됨",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "nav_menu 사용자 설정 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -108,6 +123,69 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //영화 목록 ViewPager 가져오기
+
+    }
+
+    private void startAppSetting() {
+        //requestQueue 준비
+        if (AppHelper.requestQueue == null) {
+            AppHelper.requestQueue = Volley.newRequestQueue(this);
+        }
+
+        String[] requiredPermissions = {Manifest.permission.INTERNET};
+        int requestPermissionCode = 1;
+        //permission 확인
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            sendRequest();
+        } else {
+            ActivityCompat.requestPermissions(this, requiredPermissions, requestPermissionCode);
+        }
+    }
+
+    private void sendRequest() {
+        String url = "http://boostcourse-appapi.connect.or.kr:10000/movie/readMovieList";
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        processRequest(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("ErrorTest", error.toString());
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                return params;
+            }
+        };
+
+        AppHelper.requestQueue.add(stringRequest);
+    }
+
+    private void processRequest(String response) {
+        Gson gson = new Gson();
+        ReadMovieList readMoiveList = gson.fromJson(response, ReadMovieList.class);
+        if (readMoiveList != null) {
+            ArrayList<MovieMain> movieList = readMoiveList.getResult();
+
+            loadViewPagerView(movieList);
+        }
+    }
+
+    private void loadViewPagerView(ArrayList<MovieMain> movieList) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(MOVIE_LIST, movieList);
+        mainViewPagerFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().add(R.id.flContainer_Main, mainViewPagerFragment).commit();
     }
 
@@ -140,4 +218,22 @@ public class MainActivity extends AppCompatActivity
         mOnKeyBackPressedListener = listener;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 1 && grantResults.length == 1) {
+            boolean check = true;
+
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    check = false;
+                    break;
+                }
+            }
+
+            if (check) {
+                sendRequest();
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }

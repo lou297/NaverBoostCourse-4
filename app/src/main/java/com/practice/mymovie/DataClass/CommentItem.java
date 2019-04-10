@@ -16,7 +16,7 @@ public class CommentItem implements Parcelable {
         mComment = comment;
     }
 
-    public CommentItem(Parcel in) {
+    private CommentItem(Parcel in) {
         mId = in.readString();
         mCommentTime = in.readString();
         mCommentCredit = in.readFloat();

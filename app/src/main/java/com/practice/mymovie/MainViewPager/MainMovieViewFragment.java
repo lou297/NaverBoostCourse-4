@@ -14,17 +14,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.practice.mymovie.DataClass.ReadMovieList.MovieMain;
 import com.practice.mymovie.Interface.DataKey;
 import com.practice.mymovie.MainActivity;
 import com.practice.mymovie.R;
 
 public class MainMovieViewFragment extends
         Fragment implements DataKey {
-    private int mMovieOrder;
-    private String mMovieTitle;
-    private String mTicketSales;
-    private int mRating;
-    private String mMovieDate;
+    private MovieMain mMovie;
     private MainActivity mActivity;
 
     @Override
@@ -58,11 +56,7 @@ public class MainMovieViewFragment extends
     private void readArgument(Bundle bundle) {
         //영화 하나의 대한 정보를 받아온다.
         if (bundle != null) {
-            mMovieOrder = bundle.getInt(MOVIE_ORDER);
-            mMovieTitle = bundle.getString(MOVIE_TITLE);
-            mTicketSales = bundle.getString(TICKET_SALES);
-            mRating = bundle.getInt(RATING);
-            mMovieDate = bundle.getString(MOVIE_DATE);
+            mMovie = bundle.getParcelable(MOVIE);
         }
     }
 
@@ -74,45 +68,24 @@ public class MainMovieViewFragment extends
         Button btnDetailView = view.findViewById(R.id.btnDetailView_Main);
 
         //영화 제목 넣기
-        String movieOrderAndTitle = String.format(getString(R.string.vp_main_movieOrderAndTitle), mMovieOrder, mMovieTitle);
+        String movieOrderAndTitle = String.format(getString(R.string.vp_main_movieOrderAndTitle), mMovie.getReservation_grade(), mMovie.getTitle());
         tvMovieOrderAndTitle.setText(movieOrderAndTitle);
 
         //영화 포스터 넣기
-        switch (mMovieTitle) {
-            case "군도":
-                ivMoviePoster.setBackgroundResource(R.drawable.image1);
-                break;
-            case "공조":
-                ivMoviePoster.setBackgroundResource(R.drawable.image2);
-                break;
-            case "더 킹":
-                ivMoviePoster.setBackgroundResource(R.drawable.image3);
-                break;
-            case "레지던트 이블":
-                ivMoviePoster.setBackgroundResource(R.drawable.image4);
-                break;
-            case "럭키":
-                ivMoviePoster.setBackgroundResource(R.drawable.image5);
-                break;
-            case "아수라":
-                ivMoviePoster.setBackgroundResource(R.drawable.image6);
-                break;
-            default:
-                break;
-        }
+        Glide.with(mActivity).load(mMovie.getImage()).into(ivMoviePoster);
 
         //영화 정보 넣기
         String movieInfo;
-        if (mRating == 0)
-            movieInfo = String.format(getString(R.string.vp_main_movieInfo_all), mTicketSales, mMovieDate);
-        else
-            movieInfo = String.format(getString(R.string.vp_main_movieInfo), mTicketSales, mRating, mMovieDate);
+//        if (mRating == 0)
+//            movieInfo = String.format(getString(R.string.vp_main_movieInfo_all), mTicketSales, mMovieDate);
+//        else
+        movieInfo = String.format(getString(R.string.vp_main_movieInfo), String.valueOf(mMovie.getReservation_rate()), mMovie.getGrade(), mMovie.getDate());
         tvMovieInfo.setText(movieInfo);
 
         btnDetailView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mActivity.goToDetailView(mMovieTitle);
+                mActivity.goToDetailView(mMovie.getTitle());
             }
         });
 
