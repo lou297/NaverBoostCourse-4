@@ -80,7 +80,7 @@ public class MainViewPagerFragment extends Fragment
             order = bundle.getInt(MOVIE_ORDER,1)-1;
             //영화 상세뷰에서 메인뷰로 넘어왔을 경우, 아닌 경우에도 기본 값이 있기 때문에 상관없다.
             movieList = bundle.getParcelableArrayList(MOVIE_LIST);
-            Log.d("viewpagerTest",movieList.size()+"");
+//            Log.d("viewpagerTest",movieList.size()+"");
         }
     }
 }

@@ -234,7 +234,6 @@
                         android:id="@+id/tvMovieCredits_DetailView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/detail_view_movie_credits_val"
                         android:textColor="@color/DarkGray" />
                 </LinearLayout>
             </LinearLayout>

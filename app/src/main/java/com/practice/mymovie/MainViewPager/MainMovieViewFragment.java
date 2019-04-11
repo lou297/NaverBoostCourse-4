@@ -85,7 +85,8 @@ public class MainMovieViewFragment extends
         btnDetailView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mActivity.goToDetailView(mMovie.getTitle());
+                Log.d("test123123",mMovie.getId()+"");
+                mActivity.goToDetailView(mMovie.getId());
             }
         });
 

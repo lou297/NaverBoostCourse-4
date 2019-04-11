@@ -2,6 +2,7 @@ package com.practice.mymovie;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Movie;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,8 +17,11 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.practice.mymovie.Adapter.CommentAdapter;
 import com.practice.mymovie.DataClass.CommentItem;
+import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
+import com.practice.mymovie.DataClass.ReadMovie.ReadMovie;
 import com.practice.mymovie.Interface.DataKey;
 
 import org.w3c.dom.Text;
@@ -29,8 +33,7 @@ import static android.app.Activity.RESULT_OK;
 public class MovieDetailViewFragment extends Fragment
         implements DataKey, MainActivity.onKeyBackPressedListener {
     private MainActivity mActivity;
-    private String mMovieTitle;
-    private int mMovieRatingRes;
+    private MovieDetail mMovie;
     private ArrayList<CommentItem> mCommentList;
     private final static int WRITE_COMMENT_FROM_MOVIE_DETAIL_VIEW = 1000;
 
@@ -59,7 +62,6 @@ public class MovieDetailViewFragment extends Fragment
     private boolean bThumbUpCond = false;
     private boolean bThumbDownCond = false;
 
-    private int movieRank = 1;
 
     private TextView btnWriteComment;
     private Button btnAllComment;
@@ -81,7 +83,7 @@ public class MovieDetailViewFragment extends Fragment
     @Override
     public void onBackKey() {
 //        메인 화면으로 돌아가기 위해 activity에서 interface 생성
-        mActivity.backToMainView(movieRank);
+        mActivity.backToMainView(mMovie.getReservation_grade());
         mActivity.setOnKeyBackPressedListener(null);
     }
 
@@ -116,7 +118,7 @@ public class MovieDetailViewFragment extends Fragment
 
     private void readArgument(Bundle bundle) {
         if (bundle != null) {
-            mMovieTitle = bundle.getString(MOVIE_TITLE);
+            mMovie = bundle.getParcelable(MOVIE);
         }
     }
 
@@ -203,120 +205,22 @@ public class MovieDetailViewFragment extends Fragment
 
     private void loadInfo() {
         //서버에서 불러올 영화 정보가 없으므로 임의의 영화 정보를 넣어준다.
-        int posterResId = 0;
-        mMovieRatingRes = 0;
-        String movieCredits = "";
-        String movieRelease = "";
-        String movieGenre = "";
-        String movieShowTime = "";
-        String movieSalesPer = "";
-        String movieTotalAttendance = "";
-        String storyLine = "";
-        String movieDirector = "";
-        String movieActor = "";
-        if (mMovieTitle != null) {
-            switch (mMovieTitle) {
-                case "군도":
-                    posterResId = R.drawable.image1;
-                    mMovieRatingRes = R.drawable.ic_all;
-                    movieCredits = getString(R.string.movie1_credits);
-                    movieRelease = getString(R.string.movie1_release);
-                    movieGenre = getString(R.string.movie1_genre);
-                    movieShowTime = getString(R.string.movie1_show_time);
-                    movieRank = Integer.parseInt(getString(R.string.movie1_rank));
-                    movieSalesPer = getString(R.string.movie1_sales_per);
-                    movieTotalAttendance = getString(R.string.movie1_total_attendance);
-                    storyLine = getString(R.string.movie1_story_line);
-                    movieDirector = getString(R.string.movie1_director);
-                    movieActor = getString(R.string.movie1_actor);
-                    break;
-                case "공조":
-                    posterResId = R.drawable.image2;
-                    mMovieRatingRes = R.drawable.ic_15;
-                    movieCredits = getString(R.string.movie2_credits);
-                    movieRelease = getString(R.string.movie2_release);
-                    movieGenre = getString(R.string.movie2_genre);
-                    movieShowTime = getString(R.string.movie2_show_time);
-                    movieRank = Integer.parseInt(getString(R.string.movie2_rank));
-                    movieSalesPer = getString(R.string.movie2_sales_per);
-                    movieTotalAttendance = getString(R.string.movie2_total_attendance);
-                    storyLine = getString(R.string.movie2_story_line);
-                    movieDirector = getString(R.string.movie2_director);
-                    movieActor = getString(R.string.movie2_actor);
-                    break;
-                case "더 킹":
-                    posterResId = R.drawable.image3;
-                    mMovieRatingRes = R.drawable.ic_19;
-                    movieCredits = getString(R.string.movie3_credits);
-                    movieRelease = getString(R.string.movie3_release);
-                    movieGenre = getString(R.string.movie3_genre);
-                    movieShowTime = getString(R.string.movie3_show_time);
-                    movieRank = Integer.parseInt(getString(R.string.movie3_rank));
-                    movieSalesPer = getString(R.string.movie3_sales_per);
-                    movieTotalAttendance = getString(R.string.movie3_total_attendance);
-                    storyLine = getString(R.string.movie3_story_line);
-                    movieDirector = getString(R.string.movie3_director);
-                    movieActor = getString(R.string.movie3_actor);
-                    break;
-                case "레지던트 이블":
-                    posterResId = R.drawable.image4;
-                    mMovieRatingRes = R.drawable.ic_15;
-                    movieCredits = getString(R.string.movie4_credits);
-                    movieRelease = getString(R.string.movie4_release);
-                    movieGenre = getString(R.string.movie4_genre);
-                    movieShowTime = getString(R.string.movie4_show_time);
-                    movieRank = Integer.parseInt(getString(R.string.movie4_rank));
-                    movieSalesPer = getString(R.string.movie4_sales_per);
-                    movieTotalAttendance = getString(R.string.movie4_total_attendance);
-                    storyLine = getString(R.string.movie4_story_line);
-                    movieDirector = getString(R.string.movie4_director);
-                    movieActor = getString(R.string.movie4_actor);
-                    break;
-                case "럭키":
-                    posterResId = R.drawable.image5;
-                    mMovieRatingRes = R.drawable.ic_12;
-                    movieCredits = getString(R.string.movie5_credits);
-                    movieRelease = getString(R.string.movie5_release);
-                    movieGenre = getString(R.string.movie5_genre);
-                    movieShowTime = getString(R.string.movie5_show_time);
-                    movieRank = Integer.parseInt(getString(R.string.movie5_rank));
-                    movieSalesPer = getString(R.string.movie5_sales_per);
-                    movieTotalAttendance = getString(R.string.movie5_total_attendance);
-                    storyLine = getString(R.string.movie5_story_line);
-                    movieDirector = getString(R.string.movie5_director);
-                    movieActor = getString(R.string.movie5_actor);
-                    break;
-                case "아수라":
-                    posterResId = R.drawable.image6;
-                    mMovieRatingRes = R.drawable.ic_all;
-                    movieCredits = getString(R.string.movie6_credits);
-                    movieRelease = getString(R.string.movie6_release);
-                    movieGenre = getString(R.string.movie6_genre);
-                    movieShowTime = getString(R.string.movie6_show_time);
-                    movieRank = Integer.parseInt(getString(R.string.movie6_rank));
-                    movieSalesPer = getString(R.string.movie6_sales_per);
-                    movieTotalAttendance = getString(R.string.movie6_total_attendance);
-                    storyLine = getString(R.string.movie6_story_line);
-                    movieDirector = getString(R.string.movie6_director);
-                    movieActor = getString(R.string.movie6_actor);
-                    break;
-                default:
-                    break;
-            }
-            ivMoviePoster.setBackgroundResource(posterResId);
-            tvMovieTitle.setText(mMovieTitle);
-            ivMovieRating.setBackgroundResource(mMovieRatingRes);
-            tvMovieRelease.setText(movieRelease);
-            tvMovieGenre.setText(movieGenre);
-            tvMovieShowTime.setText(movieShowTime);
-            tvTicketRank.setText(String.format(getString(R.string.detail_view_ticket_rank), movieRank));
-            tvTicketSalesPer.setText(String.format(getString(R.string.detail_view_ticket_sales_per), movieSalesPer));
-            tvMovieCredits.setText(String.format(getString(R.string.detail_view_movie_credits_val), movieCredits));
-            tvMovieTotalAttendance.setText(movieTotalAttendance);
-            tvStoryLine.setText(storyLine);
-            tvDirector.setText(movieDirector);
-            tvActor.setText(movieActor);
-            rbMovieCredits.setRating(Float.parseFloat(movieCredits) / 2.0F);
+        if (mMovie != null) {
+
+            Glide.with(mActivity).load(mMovie.getImage()).into(ivMoviePoster);
+            tvMovieTitle.setText(mMovie.getTitle());
+//            ivMovieRating.setBackgroundResource(mMovieRatingRes);
+            tvMovieRelease.setText(mMovie.getDate());
+            tvMovieGenre.setText(mMovie.getGenre());
+            tvMovieShowTime.setText(String.format(getString(R.string.detail_view_show_time),mMovie.getDuration()));
+            tvTicketRank.setText(String.format(getString(R.string.detail_view_ticket_rank), mMovie.getReservation_grade()));
+            tvTicketSalesPer.setText(String.format(getString(R.string.detail_view_ticket_sales_per), String.valueOf(mMovie.getReservation_rate())));
+            tvMovieCredits.setText(String.valueOf(mMovie.getAudience_rating()));
+            tvMovieTotalAttendance.setText(String.format(getString(R.string.detail_view_total_attendance_val),mMovie.getAudience()));
+            tvStoryLine.setText(mMovie.getSynopsis());
+            tvDirector.setText(mMovie.getDirector());
+            tvActor.setText(mMovie.getActor());
+            rbMovieCredits.setRating((float)(mMovie.getAudience_rating()) / 2.0F);
         }
     }
 
@@ -338,8 +242,8 @@ public class MovieDetailViewFragment extends Fragment
 //        한줄평 작성 액티비티로 이동.
 //        영화 정보를 intent에 담아준다.
         Intent intent = new Intent(getContext(), CommentWriteActivity.class);
-        intent.putExtra(MOVIE_TITLE, mMovieTitle);
-        intent.putExtra(RATING, mMovieRatingRes);
+//        intent.putExtra(MOVIE_TITLE, mMovieTitle);
+//        intent.putExtra(RATING, mMovieRatingRes);
         startActivityForResult(intent, WRITE_COMMENT_FROM_MOVIE_DETAIL_VIEW);
     }
 
@@ -347,8 +251,8 @@ public class MovieDetailViewFragment extends Fragment
 //        한줄평 목록 액티비티로 이동.
 //        영화 정보를 intent에 담아준다.
         Intent intent = new Intent(getContext(), CommentListActivity.class);
-        intent.putExtra(MOVIE_TITLE, mMovieTitle);
-        intent.putExtra(RATING, mMovieRatingRes);
+//        intent.putExtra(MOVIE_TITLE, mMovieTitle);
+//        intent.putExtra(RATING, mMovieRatingRes);
         intent.putParcelableArrayListExtra(MOVIE_COMMENT_LIST,mCommentList);
         startActivity(intent);
     }

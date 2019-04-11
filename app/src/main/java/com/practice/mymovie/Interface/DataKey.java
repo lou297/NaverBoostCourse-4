@@ -9,4 +9,10 @@ public interface DataKey {
     String MOVIE_COMMENT_LIST = "MOVIE_COMMENT_LIST";
     String MOVIE_LIST = "MOVIE_LIST";
     String MOVIE = "MOVIE";
+
+    String READ_MOVIE_LIST = "/movie/readMovieList";
+    String READ_MOVIE = "/movie/readMovie";
+    String READ_COMMENT_LIST = "/movie/readCommentList";
+
+    String ID = "id";
 }
