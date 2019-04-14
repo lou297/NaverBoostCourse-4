@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.practice.mymovie.Adapter.CommentAdapter;
 import com.practice.mymovie.DataClass.CommentItem;
+import com.practice.mymovie.DataClass.ReadCommentList.Comment;
 import com.practice.mymovie.Interface.DataKey;
 import com.practice.mymovie.R;
 
@@ -32,7 +33,7 @@ public class CommentListActivity extends AppCompatActivity
 
     private String mMovieTitle;
     private int mMovieRating;
-    private ArrayList<CommentItem> mCommentList;
+    private ArrayList<Comment> mCommentList;
 
     private final static int WRITE_COMMENT_FROM_COMMENT_LIST = 1001;
 
@@ -114,7 +115,7 @@ public class CommentListActivity extends AppCompatActivity
             int numOfReviewers = mCommentList.size();
             float total = 0;
             for (int i = 0; i < numOfReviewers; i++) {
-                total += mCommentList.get(i).getmCommentCredit();
+                total += mCommentList.get(i).getRating();
             }
             float average = total / (float) numOfReviewers;
             average = Math.round((average*100)/100.0);

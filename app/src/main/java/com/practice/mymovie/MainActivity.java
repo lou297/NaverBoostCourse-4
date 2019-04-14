@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DataKey {
     private MainViewPagerFragment mainViewPagerFragment;
     private ArrayList<MovieMain> mMovieList;
+
     //fragment에서 onBackPressed를 받기 위해 사용
     private onKeyBackPressedListener mOnKeyBackPressedListener;
     private Toolbar toolbar;
@@ -125,7 +126,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //영화 목록 ViewPager 가져오기
-
     }
 
     private void startAppSetting() {
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity
                                 processRequest_ReadMovieList(response);
                                 break;
                             case 2:
-                                processRequest_ReadMovie(response);
+                                processRequest_ReadMovie(response, params.get(ID));
                                 break;
                         }
                     }
@@ -178,12 +178,9 @@ public class MainActivity extends AppCompatActivity
             protected Map<String, String> getParams() throws AuthFailureError {
             //파라미터가 null인 경우 빈 해시맵을 전달해준다.
                 if(params != null ) {
-                    for(String i : params.values())
-                        Log.d("testdddd","된건데?? : " + i);
                     return params;
                 }
                 else {
-                    Log.d("testdddd","왜 안댐");
                     return new HashMap<>();
                 }
             }
@@ -201,13 +198,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void processRequest_ReadMovie(String response) {
+    private void processRequest_ReadMovie(String response, String id) {
         Gson gson = new Gson();
         ReadMovie readMovie = gson.fromJson(response, ReadMovie.class);
         if(readMovie != null ){
             ArrayList<MovieDetail> readMovieResult = readMovie.getResult();
             if(!readMovieResult.isEmpty())
-                loadDetailView(readMovieResult.get(0));
+                loadDetailView(readMovieResult.get(0), id);
         }
     }
 
@@ -220,10 +217,11 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction().add(R.id.flContainer_Main, mainViewPagerFragment).commit();
     }
 
-    private void loadDetailView(MovieDetail movieDetail) {
+    private void loadDetailView(MovieDetail movieDetail, String id) {
         MovieDetailViewFragment movieDetailViewFragment = new MovieDetailViewFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable(MOVIE, movieDetail);
+        bundle.putString(ID, id);
         movieDetailViewFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.flContainer_Main, movieDetailViewFragment).commit();
 

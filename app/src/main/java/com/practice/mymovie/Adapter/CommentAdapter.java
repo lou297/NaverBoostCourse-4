@@ -6,15 +6,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.practice.mymovie.DataClass.CommentItem;
+import com.practice.mymovie.DataClass.ReadCommentList.Comment;
 import com.practice.mymovie.View.CommentItemView;
 
 import java.util.ArrayList;
 
 public class CommentAdapter extends BaseAdapter {
-    private ArrayList<CommentItem> list;
+    private ArrayList<Comment> list;
     private Context context;
 
-    public CommentAdapter(Context context, ArrayList<CommentItem> list){
+    public CommentAdapter(Context context, ArrayList<Comment> list){
         this.context = context;
         this.list = list;
     }
@@ -42,7 +43,7 @@ public class CommentAdapter extends BaseAdapter {
         } else {
             view = (CommentItemView) convertView;
         }
-        CommentItem item = list.get(position);
+        Comment item = list.get(position);
 
         view.setCommentInfo(item);
         return view;

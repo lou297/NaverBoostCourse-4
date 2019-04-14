@@ -17,9 +17,17 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.practice.mymovie.Adapter.CommentAdapter;
 import com.practice.mymovie.DataClass.CommentItem;
+import com.practice.mymovie.DataClass.ReadCommentList.Comment;
+import com.practice.mymovie.DataClass.ReadCommentList.ReadCommentList;
 import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
 import com.practice.mymovie.DataClass.ReadMovie.ReadMovie;
 import com.practice.mymovie.Interface.DataKey;
@@ -27,6 +35,8 @@ import com.practice.mymovie.Interface.DataKey;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -34,7 +44,8 @@ public class MovieDetailViewFragment extends Fragment
         implements DataKey, MainActivity.onKeyBackPressedListener {
     private MainActivity mActivity;
     private MovieDetail mMovie;
-    private ArrayList<CommentItem> mCommentList;
+    private String mMovieId;
+    private ArrayList<Comment> mCommentList;
     private final static int WRITE_COMMENT_FROM_MOVIE_DETAIL_VIEW = 1000;
 
     private ImageView ivMoviePoster;
@@ -119,6 +130,7 @@ public class MovieDetailViewFragment extends Fragment
     private void readArgument(Bundle bundle) {
         if (bundle != null) {
             mMovie = bundle.getParcelable(MOVIE);
+            mMovieId = bundle.getString(ID);
         }
     }
 
@@ -204,7 +216,6 @@ public class MovieDetailViewFragment extends Fragment
     }
 
     private void loadInfo() {
-        //서버에서 불러올 영화 정보가 없으므로 임의의 영화 정보를 넣어준다.
         if (mMovie != null) {
 
             Glide.with(mActivity).load(mMovie.getImage()).into(ivMoviePoster);
@@ -224,17 +235,60 @@ public class MovieDetailViewFragment extends Fragment
         }
     }
 
+    private void sendRequest(String addUrl, final Map<String, String> params) {
+        String url = "http://boostcourse-appapi.connect.or.kr:10000/" + addUrl;
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        processResquest(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(mActivity, "리뷰 목록 불러오기 실패",Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                if(params != null ) {
+                    return params;
+                }
+                else {
+                    return new HashMap<>();
+                }
+            }
+        };
+
+        AppHelper.requestQueue.add(stringRequest);
+    }
+
+    private void processResquest(String response){
+        Gson gson = new Gson();
+        ReadCommentList readCommentList = gson.fromJson(response, ReadCommentList.class);
+
+        if(readCommentList != null ){
+            mCommentList = readCommentList.getResult();
+            if(mCommentList != null){
+                CommentAdapter adapter = new CommentAdapter(getContext(), mCommentList);
+                ListView listView = getView().findViewById(R.id.commentListView_Main);
+                listView.setAdapter(adapter);
+            }
+        }
+    }
+
     private void loadComment() {
 //        임의의 한줄평 목록을 생성해 준다.
-        if (mCommentList != null) {
-            mCommentList.add(new CommentItem("kim71**", "10분 전", 4.0F, "적당히 재밌다. 오랜만에 잠 안오는 영화 봤네요."));
-            mCommentList.add(new CommentItem("aaa123**", "1시간 전", 0.5F, "너무 재미없다"));
-            mCommentList.add(new CommentItem("kim71**", "10분 전", 3.5F, "적당히 재밌다. 오랜만에 잠 안오는 영화 봤네요."));
-            mCommentList.add(new CommentItem("kim71**", "10분 전", 2.1F, "적당히 재밌다. 오랜만에 잠 안오는 영화 봤네요."));
-
-            CommentAdapter adapter = new CommentAdapter(getContext(), mCommentList);
-            ListView listView = getView().findViewById(R.id.commentListView_Main);
-            listView.setAdapter(adapter);
+        if(mMovieId != null) {
+            Map<String, String> params = new HashMap<>();
+            params.put(ID, mMovieId);
+            params.put("limit", "all");
+            sendRequest("/movie/readCommentList", params);
         }
     }
 
@@ -251,6 +305,7 @@ public class MovieDetailViewFragment extends Fragment
 //        한줄평 목록 액티비티로 이동.
 //        영화 정보를 intent에 담아준다.
         Intent intent = new Intent(getContext(), CommentListActivity.class);
+        intent.putExtra(MOVIE, mMovie);
 //        intent.putExtra(MOVIE_TITLE, mMovieTitle);
 //        intent.putExtra(RATING, mMovieRatingRes);
         intent.putParcelableArrayListExtra(MOVIE_COMMENT_LIST,mCommentList);

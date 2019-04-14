@@ -7,6 +7,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.practice.mymovie.DataClass.CommentItem;
+import com.practice.mymovie.DataClass.ReadCommentList.Comment;
 import com.practice.mymovie.R;
 
 public class CommentItemView extends LinearLayout {
@@ -30,11 +31,11 @@ public class CommentItemView extends LinearLayout {
         tvComment = findViewById(R.id.tvComment);
     }
 
-    public void setCommentInfo(CommentItem item) {
-        String id = item.getmId();
-        String time = item.getmCommentTime();
-        float credit = item.getmCommentCredit();
-        String comment = item.getmComment();
+    public void setCommentInfo(Comment item) {
+        String id = item.getWriter();
+        String time = item.getTime();
+        float credit = (float) item.getRating();
+        String comment = item.getContents();
         tvCommentId.setText(id);
         tvCommentTime.setText(time);
         if(credit>=0 && credit<=5.0)
