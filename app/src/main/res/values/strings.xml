@@ -54,7 +54,7 @@
     <string name="detail_view_reservation">예매하기</string>
 
     <!--한줄평-->
-    <string name="comment_view_recommend">추천 0 </string>
+    <string name="comment_view_recommend">추천 %d </string>
     <string name="comment_view_report">신고하기</string>
 
     <!--한줄평 작성 창-->

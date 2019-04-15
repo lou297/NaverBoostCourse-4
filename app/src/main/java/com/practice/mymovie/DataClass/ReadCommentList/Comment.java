@@ -9,18 +9,30 @@ public class Comment implements Parcelable {
     private int movieId;
     private String writer_image;
     private String time;
-    private int timestamp;
+    private long timestamp;
     private double rating;
     private String contents;
     private int recommend;
 
-    protected Comment(Parcel in) {
+    public Comment(int id, String writer, int movieId, String writer_image, String time, long timestamp, double rating, String contents, int recommend) {
+        this.id = id;
+        this.writer = writer;
+        this.movieId = movieId;
+        this.writer_image = writer_image;
+        this.time = time;
+        this.timestamp = timestamp;
+        this.rating = rating;
+        this.contents = contents;
+        this.recommend = recommend;
+    }
+
+    private Comment(Parcel in) {
         id = in.readInt();
         writer = in.readString();
         movieId = in.readInt();
         writer_image = in.readString();
         time = in.readString();
-        timestamp = in.readInt();
+        timestamp = in.readLong();
         rating = in.readDouble();
         contents = in.readString();
         recommend = in.readInt();
@@ -58,7 +70,7 @@ public class Comment implements Parcelable {
         return time;
     }
 
-    public int getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
@@ -86,7 +98,7 @@ public class Comment implements Parcelable {
         dest.writeInt(movieId);
         dest.writeString(writer_image);
         dest.writeString(time);
-        dest.writeInt(timestamp);
+        dest.writeLong(timestamp);
         dest.writeDouble(rating);
         dest.writeString(contents);
         dest.writeInt(recommend);

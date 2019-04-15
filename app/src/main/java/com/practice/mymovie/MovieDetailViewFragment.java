@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +32,7 @@ import com.practice.mymovie.DataClass.ReadCommentList.Comment;
 import com.practice.mymovie.DataClass.ReadCommentList.ReadCommentList;
 import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
 import com.practice.mymovie.DataClass.ReadMovie.ReadMovie;
+import com.practice.mymovie.DataClass.ResponseResult.ResponseResult;
 import com.practice.mymovie.Interface.DataKey;
 
 import org.w3c.dom.Text;
@@ -47,6 +50,8 @@ public class MovieDetailViewFragment extends Fragment
     private String mMovieId;
     private ArrayList<Comment> mCommentList;
     private final static int WRITE_COMMENT_FROM_MOVIE_DETAIL_VIEW = 1000;
+
+    private ScrollView svMainContainer;
 
     private ImageView ivMoviePoster;
     private TextView tvMovieTitle;
@@ -118,11 +123,11 @@ public class MovieDetailViewFragment extends Fragment
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == WRITE_COMMENT_FROM_MOVIE_DETAIL_VIEW){
-            if(resultCode == RESULT_OK)
-                Toast.makeText(getContext(), "한줄평 작성 저장 버튼 눌림",Toast.LENGTH_SHORT).show();
+        if (requestCode == WRITE_COMMENT_FROM_MOVIE_DETAIL_VIEW) {
+            if (resultCode == RESULT_OK)
+                Toast.makeText(getContext(), "한줄평 작성 저장 버튼 눌림", Toast.LENGTH_SHORT).show();
             else
-                Toast.makeText(getContext(), "한줄평 작성 취소됨",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "한줄평 작성 취소됨", Toast.LENGTH_SHORT).show();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -134,6 +139,36 @@ public class MovieDetailViewFragment extends Fragment
         }
     }
 
+    //Thumb버튼 클릭시 상황에 따른 parameter 값 설정
+    private void checkThumbUpCond() {
+        Map<String, String> params = new HashMap();
+        if (bThumbUpCond) {
+            params.put("likeyn", "N");
+        } else{
+            params.put("likeyn", "Y");
+            if (bThumbDownCond) {
+                checkThumbDownCond();
+            }
+        }
+        params.put(ID, mMovieId);
+        sendRequest(INCREASE_LIKE_DISLIKE, params, 1);
+    }
+
+    private void checkThumbDownCond() {
+        Map<String, String> params = new HashMap<>();
+        if (bThumbDownCond) {
+            params.put("dislikeyn", "N");
+        } else{
+            params.put("dislikeyn", "Y");
+            if (bThumbUpCond) {
+                checkThumbUpCond();
+            }
+        }
+        params.put(ID, mMovieId);
+        sendRequest(INCREASE_LIKE_DISLIKE, params, 2);
+    }
+
+    //ThumbUp 체크 상태 저장
     private void controlThumbUpRate() {
         if (bThumbUpCond) {
             iThumbUpRate--;
@@ -149,6 +184,7 @@ public class MovieDetailViewFragment extends Fragment
         tvThumbUpRate.setText(String.valueOf(iThumbUpRate));
     }
 
+    //ThumbDown 체크 상태 저장
     private void controlThumbDownRate() {
         if (bThumbDownCond) {
             iThumbDownRate--;
@@ -165,6 +201,7 @@ public class MovieDetailViewFragment extends Fragment
     }
 
     private void initView(View view) {
+        svMainContainer = view.findViewById(R.id.svMainContainer_DetailView);
         ivMoviePoster = view.findViewById(R.id.ivMoviePoster_DetailView);
         tvMovieTitle = view.findViewById(R.id.tvMovieTitle_DetailView);
         ivMovieRating = view.findViewById(R.id.ivMovieRating_DetailView);
@@ -191,13 +228,13 @@ public class MovieDetailViewFragment extends Fragment
         btnThumbUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                controlThumbUpRate();
+                checkThumbUpCond();
             }
         });
         btnThumbDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                controlThumbDownRate();
+                checkThumbDownCond();
             }
         });
 
@@ -210,7 +247,7 @@ public class MovieDetailViewFragment extends Fragment
         btnAllComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToAllComment();
+                goToCommentList();
             }
         });
     }
@@ -218,24 +255,43 @@ public class MovieDetailViewFragment extends Fragment
     private void loadInfo() {
         if (mMovie != null) {
 
+            iThumbUpRate = mMovie.getLike();
+            iThumbDownRate = mMovie.getDislike();
+
             Glide.with(mActivity).load(mMovie.getImage()).into(ivMoviePoster);
             tvMovieTitle.setText(mMovie.getTitle());
-//            ivMovieRating.setBackgroundResource(mMovieRatingRes);
+            switch (mMovie.getGrade()) {
+                case 12:
+                    ivMovieRating.setBackgroundResource(R.drawable.ic_12);
+                    break;
+                case 15:
+                    ivMovieRating.setBackgroundResource(R.drawable.ic_15);
+                    break;
+                case 19:
+                    ivMovieRating.setBackgroundResource(R.drawable.ic_19);
+                    break;
+                default:
+                    ivMovieRating.setBackgroundResource(R.drawable.ic_all);
+                    break;
+            }
             tvMovieRelease.setText(mMovie.getDate());
             tvMovieGenre.setText(mMovie.getGenre());
-            tvMovieShowTime.setText(String.format(getString(R.string.detail_view_show_time),mMovie.getDuration()));
+            tvMovieShowTime.setText(String.format(getString(R.string.detail_view_show_time), mMovie.getDuration()));
             tvTicketRank.setText(String.format(getString(R.string.detail_view_ticket_rank), mMovie.getReservation_grade()));
             tvTicketSalesPer.setText(String.format(getString(R.string.detail_view_ticket_sales_per), String.valueOf(mMovie.getReservation_rate())));
             tvMovieCredits.setText(String.valueOf(mMovie.getAudience_rating()));
-            tvMovieTotalAttendance.setText(String.format(getString(R.string.detail_view_total_attendance_val),mMovie.getAudience()));
+            tvMovieTotalAttendance.setText(String.format(getString(R.string.detail_view_total_attendance_val), mMovie.getAudience()));
             tvStoryLine.setText(mMovie.getSynopsis());
             tvDirector.setText(mMovie.getDirector());
             tvActor.setText(mMovie.getActor());
-            rbMovieCredits.setRating((float)(mMovie.getAudience_rating()) / 2.0F);
+            rbMovieCredits.setRating((float) (mMovie.getAudience_rating()) / 2.0F);
+
+            tvThumbUpRate.setText(String.valueOf(iThumbUpRate));
+            tvThumbDownRate.setText(String.valueOf(iThumbDownRate));
         }
     }
 
-    private void sendRequest(String addUrl, final Map<String, String> params) {
+    private void sendRequest(String addUrl, final Map<String, String> params, final int index) {
         String url = "http://boostcourse-appapi.connect.or.kr:10000/" + addUrl;
 
         StringRequest stringRequest = new StringRequest(
@@ -244,22 +300,39 @@ public class MovieDetailViewFragment extends Fragment
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        processResquest(response);
+                        switch (index) {
+                            case 1:
+                                processResquest_Increase_Like_DisLike(response, params, 1);
+                                break;
+                            case 2:
+                                processResquest_Increase_Like_DisLike(response, params, 2);
+                                break;
+                            case 3:
+                                processResquest_ReadCommentList(response);
+                                break;
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(mActivity, "리뷰 목록 불러오기 실패",Toast.LENGTH_SHORT).show();
+                        switch (index){
+                            case 3:
+                                Toast.makeText(mActivity, "리뷰 목록 불러오기 실패", Toast.LENGTH_SHORT).show();
+                                break;
+                            default:
+                                Toast.makeText(mActivity, "좋아요/ 싫어요 버튼 적용 실패", Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+
                     }
                 }
-        ){
+        ) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                if(params != null ) {
+                if (params != null) {
                     return params;
-                }
-                else {
+                } else {
                     return new HashMap<>();
                 }
             }
@@ -268,27 +341,54 @@ public class MovieDetailViewFragment extends Fragment
         AppHelper.requestQueue.add(stringRequest);
     }
 
-    private void processResquest(String response){
+    private void processResquest_ReadCommentList(String response) {
         Gson gson = new Gson();
         ReadCommentList readCommentList = gson.fromJson(response, ReadCommentList.class);
 
-        if(readCommentList != null ){
+        if (readCommentList != null) {
             mCommentList = readCommentList.getResult();
-            if(mCommentList != null){
+            if (mCommentList != null) {
                 CommentAdapter adapter = new CommentAdapter(getContext(), mCommentList);
                 ListView listView = getView().findViewById(R.id.commentListView_Main);
                 listView.setAdapter(adapter);
             }
         }
+        if (svMainContainer != null) {
+            // 리스트 뷰가 생성되면서 스크롤이 내려간다.
+            //다시 올려주는 과정
+            svMainContainer.fullScroll(ScrollView.FOCUS_UP);
+        }
     }
+
+    private void processResquest_Increase_Like_DisLike(String response, Map<String, String> params, int index) {
+        Gson gson = new Gson();
+        ResponseResult result = gson.fromJson(response, ResponseResult.class);
+
+        if(result != null && result.getCode() == 200) {
+            Toast.makeText(mActivity, "좋아요/ 싫어요 설정이 적용됐습니다.", Toast.LENGTH_SHORT).show();
+            switch (index) {
+                case 1:
+                    controlThumbUpRate();
+                    break;
+                case 2:
+                    controlThumbDownRate();
+                    break;
+            }
+        } else {
+            Toast.makeText(mActivity, "좋아요/ 싫어요 설정이 적용되지 못했습니다.", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
 
     private void loadComment() {
 //        임의의 한줄평 목록을 생성해 준다.
-        if(mMovieId != null) {
+        if (mMovieId != null) {
             Map<String, String> params = new HashMap<>();
             params.put(ID, mMovieId);
             params.put("limit", "all");
-            sendRequest("/movie/readCommentList", params);
+            sendRequest("/movie/readCommentList", params, 3);
         }
     }
 
@@ -296,19 +396,18 @@ public class MovieDetailViewFragment extends Fragment
 //        한줄평 작성 액티비티로 이동.
 //        영화 정보를 intent에 담아준다.
         Intent intent = new Intent(getContext(), CommentWriteActivity.class);
-//        intent.putExtra(MOVIE_TITLE, mMovieTitle);
-//        intent.putExtra(RATING, mMovieRatingRes);
+        intent.putExtra(MOVIE, mMovie);
+        intent.putExtra(ID, mMovieId);
         startActivityForResult(intent, WRITE_COMMENT_FROM_MOVIE_DETAIL_VIEW);
     }
 
-    private void goToAllComment() {
+    private void goToCommentList() {
 //        한줄평 목록 액티비티로 이동.
 //        영화 정보를 intent에 담아준다.
         Intent intent = new Intent(getContext(), CommentListActivity.class);
         intent.putExtra(MOVIE, mMovie);
-//        intent.putExtra(MOVIE_TITLE, mMovieTitle);
-//        intent.putExtra(RATING, mMovieRatingRes);
-        intent.putParcelableArrayListExtra(MOVIE_COMMENT_LIST,mCommentList);
+        intent.putExtra(ID, mMovieId);
+        intent.putParcelableArrayListExtra(MOVIE_COMMENT_LIST, mCommentList);
         startActivity(intent);
     }
 

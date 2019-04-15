@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.practice.mymovie.Adapter.CommentAdapter;
 import com.practice.mymovie.DataClass.CommentItem;
 import com.practice.mymovie.DataClass.ReadCommentList.Comment;
+import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
 import com.practice.mymovie.Interface.DataKey;
 import com.practice.mymovie.R;
 
@@ -31,9 +32,11 @@ public class CommentListActivity extends AppCompatActivity
     private ListView commentListView;
     private TextView tvWriteComment;
 
-    private String mMovieTitle;
-    private int mMovieRating;
+    private MovieDetail mMovie;
+    private String mMovieId;
+
     private ArrayList<Comment> mCommentList;
+    private CommentAdapter mCommentAdapter;
 
     private final static int WRITE_COMMENT_FROM_COMMENT_LIST = 1001;
 
@@ -48,15 +51,22 @@ public class CommentListActivity extends AppCompatActivity
         Intent intent = getIntent();
         readIntent(intent);
         loadComment();
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == WRITE_COMMENT_FROM_COMMENT_LIST) {
             if (resultCode == RESULT_OK)
-                Toast.makeText(this, "한줄평 작성 저장 버튼 눌림", Toast.LENGTH_SHORT).show();
-            else
-                Toast.makeText(this, "한줄평 작성 취소됨", Toast.LENGTH_SHORT).show();
+                if (data == null) {
+                    Toast.makeText(this, "한줄평 작성 불러오기 실패", Toast.LENGTH_SHORT).show();
+                } else {
+                    Comment comment = data.getParcelableExtra("COMMENT");
+                    mCommentList.add(0,comment);
+                    mCommentAdapter.notifyDataSetChanged();
+                    Toast.makeText(this, "한줄평 작성 저장 완료", Toast.LENGTH_SHORT).show();
+                }
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -96,12 +106,25 @@ public class CommentListActivity extends AppCompatActivity
 
     private void readIntent(Intent intent) {
         if (intent != null) {
-            mMovieTitle = intent.getStringExtra(MOVIE_TITLE);
-            mMovieRating = intent.getIntExtra(RATING, R.drawable.ic_all);
+            mMovie = intent.getParcelableExtra(MOVIE);
+            mMovieId = intent.getStringExtra(ID);
             mCommentList = intent.getParcelableArrayListExtra(MOVIE_COMMENT_LIST);
 
-            tvMovieTitle.setText(mMovieTitle);
-            ivMovieRating.setBackgroundResource(mMovieRating);
+            tvMovieTitle.setText(mMovie.getTitle());
+            switch (mMovie.getGrade()) {
+                case 12:
+                    ivMovieRating.setBackgroundResource(R.drawable.ic_12);
+                    break;
+                case 15:
+                    ivMovieRating.setBackgroundResource(R.drawable.ic_15);
+                    break;
+                case 19:
+                    ivMovieRating.setBackgroundResource(R.drawable.ic_19);
+                    break;
+                default:
+                    ivMovieRating.setBackgroundResource(R.drawable.ic_all);
+                    break;
+            }
         }
     }
 
@@ -109,8 +132,8 @@ public class CommentListActivity extends AppCompatActivity
         //한줄평 목록에서 평점 평균을 내서 ratingBar를 설정해주고. 그 외 정보들을 넣어준다.ex) 한줄평 작성자 수
         String movieCredits;
         if (mCommentList != null) {
-            CommentAdapter adapter = new CommentAdapter(this, mCommentList);
-            commentListView.setAdapter(adapter);
+            mCommentAdapter = new CommentAdapter(this, mCommentList);
+            commentListView.setAdapter(mCommentAdapter);
 
             int numOfReviewers = mCommentList.size();
             float total = 0;
@@ -130,8 +153,8 @@ public class CommentListActivity extends AppCompatActivity
 
     private void goToWriteComment() {
         Intent intent = new Intent(this, CommentWriteActivity.class);
-        intent.putExtra(MOVIE_TITLE, mMovieTitle);
-        intent.putExtra(RATING, mMovieRating);
+        intent.putExtra(MOVIE, mMovie);
+        intent.putExtra(ID, mMovieId);
         startActivityForResult(intent, WRITE_COMMENT_FROM_COMMENT_LIST);
     }
 }
