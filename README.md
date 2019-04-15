@@ -32,3 +32,11 @@ Movie Detail View는 Fragment이며 MainActivity위에 올라간다.
 MainActivity안 ViewPager View안에 있는 버튼을 클릭 시 Detail View를 보여줘야 하므로 생성 과정들은 MainAcitivty를 통해 이루어 진다.
 
 이는 MainActivity 위에서 영화 목록과 영화 상세 목록을 모두 보여줌을 의미하는데, 두 경우 모두 서버에서 정보를 받아와야 하기 때문에, Activity에 있는 Request Method를 두 Fragment에서 같이 이용할 수 있도록 해주었다. 이를 위해 어느 Fragment에서 Method를 호출한 지 구분할 수 있도록 인자를 추가해 주었다.
+
+### 2019.04.15
+#### 1. 6개의 서버 주소로의 요청을 통해서 영화에 대한 모든 정보 갱신 완료.
+#### 2. 수정사항
+1. SharedPrefrence 생성을 통해 사용자 ID를 기억해줘야 한다.
+2. Package folder의 정리를 통해 코드의 가독성을 높여주자.
+3. Server통신을 위한 메소드 다수가 유사한 형태를 보인다. 인터페이스 구현으로 코드를 줄이고 유지보수를 편하게
+4. Activity에서 Fragment로 Data전달 방법을 생각해봐야 한다..!
