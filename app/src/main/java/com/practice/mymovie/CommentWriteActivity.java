@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.practice.mymovie.DataClass.ReadCommentList.Comment;
 import com.practice.mymovie.DataClass.ReadCommentList.ReadCommentList;
 import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
+import com.practice.mymovie.DataClass.ResponseResult.ResponseResult;
 import com.practice.mymovie.Interface.DataKey;
 
 import java.text.SimpleDateFormat;
@@ -117,7 +118,7 @@ public class CommentWriteActivity extends AppCompatActivity
             params.put("rating", String.valueOf(comment.getRating()));
             params.put("contents", comment.getContents());
 
-            sendRequest("/movie/readCommentList", params, comment);
+            sendRequest("/movie/createComment", params, comment);
         }
     }
 
@@ -170,15 +171,15 @@ public class CommentWriteActivity extends AppCompatActivity
 
     private void processResponse(String response, Comment comment) {
         Gson gson = new Gson();
-        ReadCommentList readCommentList = gson.fromJson(response, ReadCommentList.class);
-        if (readCommentList != null) {
-            if (readCommentList.getCode() == 200) {
+        ResponseResult responseResult = gson.fromJson(response, ResponseResult.class);
+        if (responseResult != null) {
+            if (responseResult.getCode() == 200) {
                 Intent intent = new Intent();
                 intent.putExtra("COMMENT", comment);
                 setResult(RESULT_OK, intent);
                 finish();
-            } else if (readCommentList.getCode() == 400) {
-                Toast.makeText(this, "한줄평 작성에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+            } else if (responseResult.getCode() == 400) {
+                Toast.makeText(this, "한줄평 작성 요청을 서버로 보내는데 실패하였습니다.", Toast.LENGTH_SHORT).show();
             }
         }
     }

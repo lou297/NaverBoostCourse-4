@@ -57,16 +57,16 @@ public class CommentListActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == WRITE_COMMENT_FROM_COMMENT_LIST) {
-            if (resultCode == RESULT_OK)
+            if (resultCode == RESULT_OK) {
                 if (data == null) {
                     Toast.makeText(this, "한줄평 작성 불러오기 실패", Toast.LENGTH_SHORT).show();
                 } else {
                     Comment comment = data.getParcelableExtra("COMMENT");
-                    mCommentList.add(0,comment);
+                    mCommentList.add(0, comment);
                     mCommentAdapter.notifyDataSetChanged();
                     Toast.makeText(this, "한줄평 작성 저장 완료", Toast.LENGTH_SHORT).show();
                 }
-
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

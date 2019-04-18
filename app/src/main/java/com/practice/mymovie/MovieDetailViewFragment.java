@@ -49,6 +49,7 @@ public class MovieDetailViewFragment extends Fragment
     private MovieDetail mMovie;
     private String mMovieId;
     private ArrayList<Comment> mCommentList;
+    private CommentAdapter mCommentAdapter;
     private final static int WRITE_COMMENT_FROM_MOVIE_DETAIL_VIEW = 1000;
 
     private ScrollView svMainContainer;
@@ -94,6 +95,12 @@ public class MovieDetailViewFragment extends Fragment
         if (mActivity != null)
             mActivity = null;
         super.onDetach();
+    }
+
+    @Override
+    public void onResume() {
+        loadComment();
+        super.onResume();
     }
 
     @Override
@@ -348,9 +355,9 @@ public class MovieDetailViewFragment extends Fragment
         if (readCommentList != null) {
             mCommentList = readCommentList.getResult();
             if (mCommentList != null) {
-                CommentAdapter adapter = new CommentAdapter(getContext(), mCommentList);
+                mCommentAdapter = new CommentAdapter(getContext(), mCommentList);
                 ListView listView = getView().findViewById(R.id.commentListView_Main);
-                listView.setAdapter(adapter);
+                listView.setAdapter(mCommentAdapter);
             }
         }
         if (svMainContainer != null) {
@@ -392,7 +399,8 @@ public class MovieDetailViewFragment extends Fragment
         }
     }
 
-    private void goToWriteComment() {
+
+   private void goToWriteComment() {
 //        한줄평 작성 액티비티로 이동.
 //        영화 정보를 intent에 담아준다.
         Intent intent = new Intent(getContext(), CommentWriteActivity.class);

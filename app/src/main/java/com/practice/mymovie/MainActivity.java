@@ -1,9 +1,11 @@
 package com.practice.mymovie;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.design.widget.NavigationView;
@@ -24,6 +26,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.practice.mymovie.DataClass.ReadCommentList.Comment;
 import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
 import com.practice.mymovie.DataClass.ReadMovie.ReadMovie;
 import com.practice.mymovie.DataClass.ReadMovieList.MovieMain;
@@ -38,7 +41,9 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DataKey {
     private MainViewPagerFragment mainViewPagerFragment;
+    private MovieDetailViewFragment movieDetailViewFragment;
     private ArrayList<MovieMain> mMovieList;
+    private final static int WRITE_COMMENT_FROM_MOVIE_DETAIL_VIEW = 1000;
 
     //fragment에서 onBackPressed를 받기 위해 사용
     private onKeyBackPressedListener mOnKeyBackPressedListener;
@@ -141,14 +146,14 @@ public class MainActivity extends AppCompatActivity
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
             Map<String, String> map = new HashMap<>();
             map.put("type", "1");
-            sendRequest(READ_MOVIE_LIST,map, 1);
+            sendRequest(READ_MOVIE_LIST, map, 1);
         } else {
             ActivityCompat.requestPermissions(this, requiredPermissions, requestPermissionCode);
         }
     }
 
     //index -> 1) MainViewPager  2) MovieDetailView
-    private void sendRequest(String addUrl, final Map<String,String> params, final int index) {
+    private void sendRequest(String addUrl, final Map<String, String> params, final int index) {
         String url = "http://boostcourse-appapi.connect.or.kr:10000" + addUrl;
 
         StringRequest stringRequest = new StringRequest(
@@ -157,7 +162,7 @@ public class MainActivity extends AppCompatActivity
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        switch (index){
+                        switch (index) {
                             case 1:
                                 processRequest_ReadMovieList(response);
                                 break;
@@ -176,11 +181,10 @@ public class MainActivity extends AppCompatActivity
         ) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-            //파라미터가 null인 경우 빈 해시맵을 전달해준다.
-                if(params != null ) {
+                //파라미터가 null인 경우 빈 해시맵을 전달해준다.
+                if (params != null) {
                     return params;
-                }
-                else {
+                } else {
                     return new HashMap<>();
                 }
             }
@@ -201,9 +205,9 @@ public class MainActivity extends AppCompatActivity
     private void processRequest_ReadMovie(String response, String id) {
         Gson gson = new Gson();
         ReadMovie readMovie = gson.fromJson(response, ReadMovie.class);
-        if(readMovie != null ){
+        if (readMovie != null) {
             ArrayList<MovieDetail> readMovieResult = readMovie.getResult();
-            if(!readMovieResult.isEmpty())
+            if (!readMovieResult.isEmpty())
                 loadDetailView(readMovieResult.get(0), id);
         }
     }
@@ -218,7 +222,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void loadDetailView(MovieDetail movieDetail, String id) {
-        MovieDetailViewFragment movieDetailViewFragment = new MovieDetailViewFragment();
+        movieDetailViewFragment = new MovieDetailViewFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable(MOVIE, movieDetail);
         bundle.putString(ID, id);
@@ -231,11 +235,10 @@ public class MainActivity extends AppCompatActivity
     //영화 정보를 넘겨준다.
     //영화 상세 화면에 내용을 담아 띄워준다.
     public void goToDetailView(int id) {
-        Map<String,String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         map.put(ID, String.valueOf(id));
         sendRequest(READ_MOVIE, map, 2);
     }
-
 
 
     public void backToMainView(int order) {
@@ -243,7 +246,7 @@ public class MainActivity extends AppCompatActivity
         mainViewPagerFragment = new MainViewPagerFragment();
         //bundle에 영화 상세 화면 순서를 넣어주어서 돌아왔을 때 viewpager가 해당 영화 페이지를 보여주게 한다.
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList(MOVIE_LIST,mMovieList);
+        bundle.putParcelableArrayList(MOVIE_LIST, mMovieList);
         bundle.putInt(MOVIE_ORDER, order);
         mainViewPagerFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.flContainer_Main, mainViewPagerFragment).commit();
@@ -279,4 +282,6 @@ public class MainActivity extends AppCompatActivity
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
+
 }
