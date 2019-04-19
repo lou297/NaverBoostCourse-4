@@ -1,10 +1,10 @@
-package com.practice.mymovie.Adapter;
+package com.practice.mymovie.MainViewPager;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.practice.mymovie.MainViewPager.MainMovieViewFragment;
+import com.practice.mymovie.MainViewPager.ViewPagerContent.MainMovieViewFragment;
 
 import java.util.ArrayList;
 

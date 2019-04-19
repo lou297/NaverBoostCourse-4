@@ -1,4 +1,4 @@
-package com.practice.mymovie.View;
+package com.practice.mymovie.CommentList;
 
 import android.content.Context;
 import android.util.Log;
@@ -16,19 +16,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.practice.mymovie.AppHelper;
-import com.practice.mymovie.DataClass.CommentItem;
 import com.practice.mymovie.DataClass.ReadCommentList.Comment;
-import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
 import com.practice.mymovie.DataClass.ResponseResult.ResponseResult;
-import com.practice.mymovie.Interface.DataKey;
 import com.practice.mymovie.R;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommentItemView extends LinearLayout
-        implements DataKey {
+import static com.practice.mymovie.ConstantKey.ParamsKey.*;
+import static com.practice.mymovie.ConstantKey.ServerUrl.*;
+
+public class CommentItemView extends LinearLayout {
     private TextView tvCommentId;
     private TextView tvCommentTime;
     private RatingBar commentRatingBar;
@@ -57,28 +55,30 @@ public class CommentItemView extends LinearLayout
     }
 
     public void setCommentInfo(final Comment item) {
-        String id = item.getWriter();
-        String time = item.getTime();
-        float credit = (float) item.getRating();
-        String comment = item.getContents();
-        tvCommentId.setText(id);
-        tvCommentTime.setText(time);
-        if (credit >= 0 && credit <= 5.0)
-            commentRatingBar.setRating(credit);
-        tvComment.setText(comment);
-        iCommentNumOfRecoomend = item.getRecommend();
+        if(item != null) {
+            String id = item.getWriter();
+            String time = item.getTime();
+            float credit = (float) item.getRating();
+            String comment = item.getContents();
+            tvCommentId.setText(id);
+            tvCommentTime.setText(time);
+            if (credit >= 0 && credit <= 5.0)
+                commentRatingBar.setRating(credit);
+            tvComment.setText(comment);
+            iCommentNumOfRecoomend = item.getRecommend();
 
-        tvCommentNumOfRecommend.setText(String.format(mContext.getString(R.string.comment_view_recommend), iCommentNumOfRecoomend));
+            tvCommentNumOfRecommend.setText(String.format(mContext.getString(R.string.comment_view_recommend), iCommentNumOfRecoomend));
 
-        tvCommentNumOfRecommend.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Map<String, String> params = new HashMap<>();
+            tvCommentNumOfRecommend.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Map<String, String> params = new HashMap<>();
 
-                params.put(REVIEW_ID, String.valueOf(item.getId()));
-                sendRequest(INCREASE_RECOMMEND, params);
-            }
-        });
+                    params.put(PARAMS_REVIEW_ID, String.valueOf(item.getId()));
+                    sendRequest(INCREASE_RECOMMEND, params);
+                }
+            });
+        }
     }
 
     private void sendRequest(String addUrl, final Map<String, String> params) {

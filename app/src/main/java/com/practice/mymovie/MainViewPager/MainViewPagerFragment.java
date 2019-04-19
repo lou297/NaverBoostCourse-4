@@ -6,21 +6,20 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.practice.mymovie.Adapter.MainViewPagerAdapter;
 import com.practice.mymovie.DataClass.ReadMovieList.MovieMain;
-import com.practice.mymovie.Interface.DataKey;
 import com.practice.mymovie.MainActivity;
+import com.practice.mymovie.MainViewPager.ViewPagerContent.MainMovieViewFragment;
 import com.practice.mymovie.R;
 
 import java.util.ArrayList;
 
-public class MainViewPagerFragment extends Fragment
-        implements DataKey {
+import static com.practice.mymovie.ConstantKey.ConstantKey.*;
+
+public class MainViewPagerFragment extends Fragment {
     private ArrayList<MainMovieViewFragment> mMovieList;
     private ViewPager viewPager;
     private MainActivity mActivity;

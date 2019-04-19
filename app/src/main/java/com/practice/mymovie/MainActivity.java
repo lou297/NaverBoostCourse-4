@@ -31,19 +31,21 @@ import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
 import com.practice.mymovie.DataClass.ReadMovie.ReadMovie;
 import com.practice.mymovie.DataClass.ReadMovieList.MovieMain;
 import com.practice.mymovie.DataClass.ReadMovieList.ReadMovieList;
-import com.practice.mymovie.Interface.DataKey;
 import com.practice.mymovie.MainViewPager.MainViewPagerFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.practice.mymovie.ConstantKey.ParamsKey.*;
+import static com.practice.mymovie.ConstantKey.ConstantKey.*;
+import static com.practice.mymovie.ConstantKey.ServerUrl.*;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DataKey {
+        implements NavigationView.OnNavigationItemSelectedListener {
     private MainViewPagerFragment mainViewPagerFragment;
     private MovieDetailViewFragment movieDetailViewFragment;
     private ArrayList<MovieMain> mMovieList;
-    private final static int WRITE_COMMENT_FROM_MOVIE_DETAIL_VIEW = 1000;
 
     //fragment에서 onBackPressed를 받기 위해 사용
     private onKeyBackPressedListener mOnKeyBackPressedListener;
@@ -145,7 +147,7 @@ public class MainActivity extends AppCompatActivity
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
             Map<String, String> map = new HashMap<>();
-            map.put("type", "1");
+            map.put(PARAMS_TYPE, "1");
             sendRequest(READ_MOVIE_LIST, map, 1);
         } else {
             ActivityCompat.requestPermissions(this, requiredPermissions, requestPermissionCode);
@@ -167,7 +169,7 @@ public class MainActivity extends AppCompatActivity
                                 processRequest_ReadMovieList(response);
                                 break;
                             case 2:
-                                processRequest_ReadMovie(response, params.get(ID));
+                                processRequest_ReadMovie(response, params.get(PARAMS_ID));
                                 break;
                         }
                     }
@@ -236,14 +238,14 @@ public class MainActivity extends AppCompatActivity
     //영화 상세 화면에 내용을 담아 띄워준다.
     public void goToDetailView(int id) {
         Map<String, String> map = new HashMap<>();
-        map.put(ID, String.valueOf(id));
+        map.put(PARAMS_ID, String.valueOf(id));
         sendRequest(READ_MOVIE, map, 2);
     }
 
 
     public void backToMainView(int order) {
         //메인 뷰로 돌아온다.
-        mainViewPagerFragment = new MainViewPagerFragment();
+//        mainViewPagerFragment = new MainViewPagerFragment();
         //bundle에 영화 상세 화면 순서를 넣어주어서 돌아왔을 때 viewpager가 해당 영화 페이지를 보여주게 한다.
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(MOVIE_LIST, mMovieList);
@@ -276,7 +278,7 @@ public class MainActivity extends AppCompatActivity
             if (check) {
                 //권한을 확인 받은 경우 요청을 보낸다.
                 Map<String, String> map = new HashMap<>();
-                map.put("type", "1");
+                map.put(PARAMS_TYPE, "1");
                 sendRequest(READ_MOVIE_LIST, map, 1);
             }
         }

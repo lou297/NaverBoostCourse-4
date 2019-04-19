@@ -1,13 +1,11 @@
-package com.practice.mymovie.Adapter;
+package com.practice.mymovie.CommentList;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.practice.mymovie.DataClass.CommentItem;
 import com.practice.mymovie.DataClass.ReadCommentList.Comment;
-import com.practice.mymovie.View.CommentItemView;
 
 import java.util.ArrayList;
 

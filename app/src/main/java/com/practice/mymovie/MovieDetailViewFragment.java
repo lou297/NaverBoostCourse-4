@@ -2,12 +2,10 @@ package com.practice.mymovie;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Movie;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,25 +24,24 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
-import com.practice.mymovie.Adapter.CommentAdapter;
-import com.practice.mymovie.DataClass.CommentItem;
+import com.practice.mymovie.CommentList.CommentAdapter;
 import com.practice.mymovie.DataClass.ReadCommentList.Comment;
 import com.practice.mymovie.DataClass.ReadCommentList.ReadCommentList;
 import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
-import com.practice.mymovie.DataClass.ReadMovie.ReadMovie;
 import com.practice.mymovie.DataClass.ResponseResult.ResponseResult;
-import com.practice.mymovie.Interface.DataKey;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.practice.mymovie.ConstantKey.ParamsKey.*;
+import static com.practice.mymovie.ConstantKey.ConstantKey.*;
+import static com.practice.mymovie.ConstantKey.ServerUrl.*;
+
 import static android.app.Activity.RESULT_OK;
 
 public class MovieDetailViewFragment extends Fragment
-        implements DataKey, MainActivity.onKeyBackPressedListener {
+        implements MainActivity.onKeyBackPressedListener {
     private MainActivity mActivity;
     private MovieDetail mMovie;
     private String mMovieId;
@@ -150,28 +147,28 @@ public class MovieDetailViewFragment extends Fragment
     private void checkThumbUpCond() {
         Map<String, String> params = new HashMap();
         if (bThumbUpCond) {
-            params.put("likeyn", "N");
-        } else{
-            params.put("likeyn", "Y");
+            params.put(PARAMS_LIKEYN, "N");
+        } else {
+            params.put(PARAMS_LIKEYN, "Y");
             if (bThumbDownCond) {
                 checkThumbDownCond();
             }
         }
-        params.put(ID, mMovieId);
+        params.put(PARAMS_ID, mMovieId);
         sendRequest(INCREASE_LIKE_DISLIKE, params, 1);
     }
 
     private void checkThumbDownCond() {
         Map<String, String> params = new HashMap<>();
         if (bThumbDownCond) {
-            params.put("dislikeyn", "N");
-        } else{
-            params.put("dislikeyn", "Y");
+            params.put(PARAMS_DISLIKEYN, "N");
+        } else {
+            params.put(PARAMS_DISLIKEYN, "Y");
             if (bThumbUpCond) {
                 checkThumbUpCond();
             }
         }
-        params.put(ID, mMovieId);
+        params.put(PARAMS_ID, mMovieId);
         sendRequest(INCREASE_LIKE_DISLIKE, params, 2);
     }
 
@@ -323,7 +320,7 @@ public class MovieDetailViewFragment extends Fragment
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        switch (index){
+                        switch (index) {
                             case 3:
                                 Toast.makeText(mActivity, "리뷰 목록 불러오기 실패", Toast.LENGTH_SHORT).show();
                                 break;
@@ -371,7 +368,7 @@ public class MovieDetailViewFragment extends Fragment
         Gson gson = new Gson();
         ResponseResult result = gson.fromJson(response, ResponseResult.class);
 
-        if(result != null && result.getCode() == 200) {
+        if (result != null && result.getCode() == 200) {
             Toast.makeText(mActivity, "좋아요/ 싫어요 설정이 적용됐습니다.", Toast.LENGTH_SHORT).show();
             switch (index) {
                 case 1:
@@ -393,14 +390,14 @@ public class MovieDetailViewFragment extends Fragment
 //        임의의 한줄평 목록을 생성해 준다.
         if (mMovieId != null) {
             Map<String, String> params = new HashMap<>();
-            params.put(ID, mMovieId);
-            params.put("limit", "all");
-            sendRequest("/movie/readCommentList", params, 3);
+            params.put(PARAMS_ID, mMovieId);
+            params.put(PARAMS_LIMIT, "all");
+            sendRequest(READ_COMMENT_LIST, params, 3);
         }
     }
 
 
-   private void goToWriteComment() {
+    private void goToWriteComment() {
 //        한줄평 작성 액티비티로 이동.
 //        영화 정보를 intent에 담아준다.
         Intent intent = new Intent(getContext(), CommentWriteActivity.class);

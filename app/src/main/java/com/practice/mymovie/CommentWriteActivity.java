@@ -22,15 +22,17 @@ import com.practice.mymovie.DataClass.ReadCommentList.Comment;
 import com.practice.mymovie.DataClass.ReadCommentList.ReadCommentList;
 import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
 import com.practice.mymovie.DataClass.ResponseResult.ResponseResult;
-import com.practice.mymovie.Interface.DataKey;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommentWriteActivity extends AppCompatActivity
-        implements DataKey {
+import static com.practice.mymovie.ConstantKey.ParamsKey.*;
+import static com.practice.mymovie.ConstantKey.ConstantKey.*;
+import static com.practice.mymovie.ConstantKey.ServerUrl.*;
+
+public class CommentWriteActivity extends AppCompatActivity {
     private Button btnSave;
     private Button btnCancel;
 
@@ -113,12 +115,12 @@ public class CommentWriteActivity extends AppCompatActivity
         if (checkContent) {
             Map<String, String> params = new HashMap<>();
             Comment comment = getComment();
-            params.put(ID, String.valueOf(comment.getId()));
-            params.put("writer", comment.getWriter());
-            params.put("rating", String.valueOf(comment.getRating()));
-            params.put("contents", comment.getContents());
+            params.put(PARAMS_ID, String.valueOf(comment.getId()));
+            params.put(PARAMS_WRITER, comment.getWriter());
+            params.put(PARAMS_RATING, String.valueOf(comment.getRating()));
+            params.put(PARAMS_CONTENTS, comment.getContents());
 
-            sendRequest("/movie/createComment", params, comment);
+            sendRequest(CREATE_COMMENT, params, comment);
         }
     }
 
@@ -175,7 +177,7 @@ public class CommentWriteActivity extends AppCompatActivity
         if (responseResult != null) {
             if (responseResult.getCode() == 200) {
                 Intent intent = new Intent();
-                intent.putExtra("COMMENT", comment);
+                intent.putExtra(COMMENT, comment);
                 setResult(RESULT_OK, intent);
                 finish();
             } else if (responseResult.getCode() == 400) {

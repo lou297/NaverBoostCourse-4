@@ -1,4 +1,4 @@
-package com.practice.mymovie.MainViewPager;
+package com.practice.mymovie.MainViewPager.ViewPagerContent;
 
 import android.content.Context;
 import android.graphics.Movie;
@@ -16,12 +16,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.practice.mymovie.DataClass.ReadMovieList.MovieMain;
-import com.practice.mymovie.Interface.DataKey;
 import com.practice.mymovie.MainActivity;
 import com.practice.mymovie.R;
 
-public class MainMovieViewFragment extends
-        Fragment implements DataKey {
+import static com.practice.mymovie.ConstantKey.ConstantKey.*;
+
+public class MainMovieViewFragment extends Fragment {
     private MovieMain mMovie;
     private MainActivity mActivity;
 
@@ -76,9 +76,7 @@ public class MainMovieViewFragment extends
 
         //영화 정보 넣기
         String movieInfo;
-//        if (mRating == 0)
-//            movieInfo = String.format(getString(R.string.vp_main_movieInfo_all), mTicketSales, mMovieDate);
-//        else
+
         movieInfo = String.format(getString(R.string.vp_main_movieInfo), String.valueOf(mMovie.getReservation_rate()), mMovie.getGrade(), mMovie.getDate());
         tvMovieInfo.setText(movieInfo);
 

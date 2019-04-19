@@ -7,24 +7,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.practice.mymovie.Adapter.CommentAdapter;
-import com.practice.mymovie.DataClass.CommentItem;
+import com.practice.mymovie.CommentList.CommentAdapter;
 import com.practice.mymovie.DataClass.ReadCommentList.Comment;
 import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
-import com.practice.mymovie.Interface.DataKey;
-import com.practice.mymovie.R;
 
 import java.util.ArrayList;
 
-public class CommentListActivity extends AppCompatActivity
-        implements DataKey {
+import static com.practice.mymovie.ConstantKey.ConstantKey.*;
+
+public class CommentListActivity extends AppCompatActivity {
     private TextView tvMovieTitle;
     private ImageView ivMovieRating;
     private RatingBar commentRatingBar;
@@ -61,7 +58,7 @@ public class CommentListActivity extends AppCompatActivity
                 if (data == null) {
                     Toast.makeText(this, "한줄평 작성 불러오기 실패", Toast.LENGTH_SHORT).show();
                 } else {
-                    Comment comment = data.getParcelableExtra("COMMENT");
+                    Comment comment = data.getParcelableExtra(COMMENT);
                     mCommentList.add(0, comment);
                     mCommentAdapter.notifyDataSetChanged();
                     Toast.makeText(this, "한줄평 작성 저장 완료", Toast.LENGTH_SHORT).show();
