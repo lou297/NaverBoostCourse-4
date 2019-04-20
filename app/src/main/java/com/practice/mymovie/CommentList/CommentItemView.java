@@ -23,8 +23,8 @@ import com.practice.mymovie.R;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.practice.mymovie.ConstantKey.ParamsKey.*;
-import static com.practice.mymovie.ConstantKey.ServerUrl.*;
+import static com.practice.mymovie.ConstantKey.ParamsKey.PARAMS_REVIEW_ID;
+import static com.practice.mymovie.ConstantKey.ServerUrl.INCREASE_RECOMMEND;
 
 public class CommentItemView extends LinearLayout {
     private TextView tvCommentId;
@@ -42,16 +42,18 @@ public class CommentItemView extends LinearLayout {
     }
 
     private void init(Context context) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.view_comment_item, this, true);
+        if(context != null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            inflater.inflate(R.layout.view_comment_item, this, true);
 
-        tvCommentId = findViewById(R.id.tvCommentId);
-        tvCommentTime = findViewById(R.id.tvCommentTime);
-        commentRatingBar = findViewById(R.id.commentRatingBar_CommentItemView);
-        tvComment = findViewById(R.id.tvComment);
-        tvCommentNumOfRecommend = findViewById(R.id.tvCommentNumOfRecommend);
+            tvCommentId = findViewById(R.id.tvCommentId);
+            tvCommentTime = findViewById(R.id.tvCommentTime);
+            commentRatingBar = findViewById(R.id.commentRatingBar_CommentItemView);
+            tvComment = findViewById(R.id.tvComment);
+            tvCommentNumOfRecommend = findViewById(R.id.tvCommentNumOfRecommend);
 
-        mContext = context;
+            mContext = context;
+        }
     }
 
     public void setCommentInfo(final Comment item) {

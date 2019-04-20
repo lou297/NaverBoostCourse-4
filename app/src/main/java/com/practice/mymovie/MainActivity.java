@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -102,18 +103,24 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        if(item != null){
+            int id = item.getItemId();
 
-        if (id == R.id.nav_movieList) {
-            Toast.makeText(this, "nav_menu 영화 목록 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_movieAPI) {
-            Toast.makeText(this, "nav_menu 영화 API 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_reservation) {
-            Toast.makeText(this, "nav_menu 예매하기 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_userSetting) {
-            Toast.makeText(this, "nav_menu 사용자 설정 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
+            switch (id) {
+                case R.id.nav_movieList:
+                    Toast.makeText(this, "nav_menu 영화 목록 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.nav_movieAPI:
+                    Toast.makeText(this, "nav_menu 영화 API 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.nav_reservation:
+                    Toast.makeText(this, "nav_menu 예매하기 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.nav_userSetting:
+                    Toast.makeText(this, "nav_menu 사용자 설정 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
+                    break;
+            }
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -132,7 +139,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //영화 목록 ViewPager 가져오기
     }
 
     private void startAppSetting() {
@@ -141,6 +147,7 @@ public class MainActivity extends AppCompatActivity
             AppHelper.requestQueue = Volley.newRequestQueue(this);
         }
 
+        //인터넷 권한 확인 후, 인터넷 권한 있을 시에 서버로 요청 보낸다.
         String[] requiredPermissions = {Manifest.permission.INTERNET};
         int requestPermissionCode = 1;
         //permission 확인
@@ -177,7 +184,7 @@ public class MainActivity extends AppCompatActivity
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("ErrorTest", error.toString());
+                        Log.d("ServerRequestError", error.toString());
                     }
                 }
         ) {
@@ -220,7 +227,9 @@ public class MainActivity extends AppCompatActivity
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(MOVIE_LIST, movieList);
         mainViewPagerFragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().add(R.id.flContainer_Main, mainViewPagerFragment).commit();
+        FragmentManager FM = getSupportFragmentManager();
+        if(FM != null)
+            FM.beginTransaction().add(R.id.flContainer_Main, mainViewPagerFragment).commit();
     }
 
     private void loadDetailView(MovieDetail movieDetail, String id) {
@@ -229,7 +238,9 @@ public class MainActivity extends AppCompatActivity
         bundle.putParcelable(MOVIE, movieDetail);
         bundle.putString(ID, id);
         movieDetailViewFragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.flContainer_Main, movieDetailViewFragment).commit();
+        FragmentManager FM = getSupportFragmentManager();
+        if(FM != null)
+            FM.beginTransaction().replace(R.id.flContainer_Main, movieDetailViewFragment).commit();
 
         toolbar.setTitle(getString(R.string.main_toolbar_detail));
     }
@@ -245,13 +256,20 @@ public class MainActivity extends AppCompatActivity
 
     public void backToMainView(int order) {
         //메인 뷰로 돌아온다.
-//        mainViewPagerFragment = new MainViewPagerFragment();
+        mainViewPagerFragment = new MainViewPagerFragment();
+        ////////////////////////////////////////////////////
+        //mainViewPagerFragment를 새로 생성하지 않고 기존의 것을 그대로 사용한 경우
+        //ViewPager에서 View가 보이지 않는 현상이 발생합니다.
+        //ViewPager의 Swipe를 통해 OffScreenPageLimit로 인해 새로 생성된 뷰로 이동하면 그때서야 View가 생성됩니다.
+        ////////////////////////////////////////////////////
         //bundle에 영화 상세 화면 순서를 넣어주어서 돌아왔을 때 viewpager가 해당 영화 페이지를 보여주게 한다.
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(MOVIE_LIST, mMovieList);
         bundle.putInt(MOVIE_ORDER, order);
         mainViewPagerFragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.flContainer_Main, mainViewPagerFragment).commit();
+        FragmentManager FM = getSupportFragmentManager();
+        if(FM != null)
+            FM.beginTransaction().replace(R.id.flContainer_Main, mainViewPagerFragment).commit();
         toolbar.setTitle(getString(R.string.main_toolbar_title));
     }
 

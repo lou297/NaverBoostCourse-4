@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,10 +56,16 @@ public class MainViewPagerFragment extends Fragment {
         Bundle bundle = getArguments();
         readArgument(bundle);
         createMovieView();
-        MainViewPagerAdapter adapter = new MainViewPagerAdapter(mActivity.getSupportFragmentManager(), mMovieList);
-        viewPager.setAdapter(adapter);
-        viewPager.setCurrentItem(order);
-        super.onActivityCreated(savedInstanceState);
+
+        FragmentManager FM = mActivity.getSupportFragmentManager();
+
+        if (FM != null) {
+            MainViewPagerAdapter adapter = new MainViewPagerAdapter(FM, mMovieList);
+            viewPager.setAdapter(adapter);
+            viewPager.setCurrentItem(order);
+            super.onActivityCreated(savedInstanceState);
+        }
+
     }
 
     private void createMovieView() {
@@ -76,10 +84,9 @@ public class MainViewPagerFragment extends Fragment {
 
     private void readArgument(Bundle bundle) {
         if (bundle != null) {
-            order = bundle.getInt(MOVIE_ORDER,1)-1;
+            order = bundle.getInt(MOVIE_ORDER, 1) - 1;
             //영화 상세뷰에서 메인뷰로 넘어왔을 경우, 아닌 경우에도 기본 값이 있기 때문에 상관없다.
             movieList = bundle.getParcelableArrayList(MOVIE_LIST);
-//            Log.d("viewpagerTest",movieList.size()+"");
         }
     }
 }

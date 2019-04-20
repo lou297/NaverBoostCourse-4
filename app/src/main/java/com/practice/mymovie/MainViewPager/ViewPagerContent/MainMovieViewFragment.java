@@ -72,7 +72,9 @@ public class MainMovieViewFragment extends Fragment {
         tvMovieOrderAndTitle.setText(movieOrderAndTitle);
 
         //영화 포스터 넣기
-        Glide.with(mActivity).load(mMovie.getImage()).into(ivMoviePoster);
+        String ImageUrl = mMovie.getImage();
+        if(ImageUrl != null)
+            Glide.with(mActivity).load(ImageUrl).into(ivMoviePoster);
 
         //영화 정보 넣기
         String movieInfo;

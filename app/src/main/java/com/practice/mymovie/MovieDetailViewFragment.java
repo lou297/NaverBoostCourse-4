@@ -37,6 +37,7 @@ import java.util.Map;
 import static com.practice.mymovie.ConstantKey.ParamsKey.*;
 import static com.practice.mymovie.ConstantKey.ConstantKey.*;
 import static com.practice.mymovie.ConstantKey.ServerUrl.*;
+import static com.practice.mymovie.ConstantKey.ActivityResultKey.*;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -47,7 +48,6 @@ public class MovieDetailViewFragment extends Fragment
     private String mMovieId;
     private ArrayList<Comment> mCommentList;
     private CommentAdapter mCommentAdapter;
-    private final static int WRITE_COMMENT_FROM_MOVIE_DETAIL_VIEW = 1000;
 
     private ScrollView svMainContainer;
 
@@ -96,6 +96,7 @@ public class MovieDetailViewFragment extends Fragment
 
     @Override
     public void onResume() {
+        //리뷰 작성 후 다시 돌아왔을 시 리뷰 목록을 다시 불러온다.
         loadComment();
         super.onResume();
     }

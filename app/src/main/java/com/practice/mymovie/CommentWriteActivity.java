@@ -175,13 +175,16 @@ public class CommentWriteActivity extends AppCompatActivity {
         Gson gson = new Gson();
         ResponseResult responseResult = gson.fromJson(response, ResponseResult.class);
         if (responseResult != null) {
-            if (responseResult.getCode() == 200) {
-                Intent intent = new Intent();
-                intent.putExtra(COMMENT, comment);
-                setResult(RESULT_OK, intent);
-                finish();
-            } else if (responseResult.getCode() == 400) {
-                Toast.makeText(this, "한줄평 작성 요청을 서버로 보내는데 실패하였습니다.", Toast.LENGTH_SHORT).show();
+            switch (responseResult.getCode()){
+                case 200:
+                    Intent intent = new Intent();
+                    intent.putExtra(COMMENT, comment);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                    break;
+                case 400:
+                    Toast.makeText(this, "한줄평 작성 요청을 서버로 보내는데 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                    break;
             }
         }
     }

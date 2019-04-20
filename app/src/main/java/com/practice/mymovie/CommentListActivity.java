@@ -20,6 +20,7 @@ import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
 import java.util.ArrayList;
 
 import static com.practice.mymovie.ConstantKey.ConstantKey.*;
+import static com.practice.mymovie.ConstantKey.ActivityResultKey.*;
 
 public class CommentListActivity extends AppCompatActivity {
     private TextView tvMovieTitle;
@@ -35,7 +36,6 @@ public class CommentListActivity extends AppCompatActivity {
     private ArrayList<Comment> mCommentList;
     private CommentAdapter mCommentAdapter;
 
-    private final static int WRITE_COMMENT_FROM_COMMENT_LIST = 1001;
 
 
 

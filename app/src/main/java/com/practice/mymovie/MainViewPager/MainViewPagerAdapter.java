@@ -1,5 +1,6 @@
 package com.practice.mymovie.MainViewPager;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -24,4 +25,5 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     public int getCount() {
         return list.size();
     }
+
 }
