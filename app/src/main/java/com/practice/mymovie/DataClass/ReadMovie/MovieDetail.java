@@ -26,6 +26,33 @@ public class MovieDetail implements Parcelable {
     private int like;
     private int dislike;
 
+    public MovieDetail(String title, String date, double user_rating, double audience_rating, double reviewer_rating,
+                       double reservation_rate, int reservation_grade, int grade, String thumb, String image, String photos,
+                       String videos, String outlinks, String genre, int duration, int audience, String synopsis, String director,
+                       String actor, int like, int dislike) {
+        this.title = title;
+        this.date = date;
+        this.user_rating = user_rating;
+        this.audience_rating = audience_rating;
+        this.reviewer_rating = reviewer_rating;
+        this.reservation_rate = reservation_rate;
+        this.reservation_grade = reservation_grade;
+        this.grade = grade;
+        this.thumb = thumb;
+        this.image = image;
+        this.photos = photos;
+        this.videos = videos;
+        this.outlinks = outlinks;
+        this.genre = genre;
+        this.duration = duration;
+        this.audience = audience;
+        this.synopsis = synopsis;
+        this.director = director;
+        this.actor = actor;
+        this.like = like;
+        this.dislike = dislike;
+    }
+
     private MovieDetail(Parcel in) {
         title = in.readString();
         date = in.readString();

@@ -32,15 +32,23 @@ import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
 import com.practice.mymovie.DataClass.ReadMovie.ReadMovie;
 import com.practice.mymovie.DataClass.ReadMovieList.MovieMain;
 import com.practice.mymovie.DataClass.ReadMovieList.ReadMovieList;
+import com.practice.mymovie.DbHelper.CreateTable;
+import com.practice.mymovie.DbHelper.InsertTable;
+import com.practice.mymovie.DbHelper.OpenDatabase;
 import com.practice.mymovie.MainViewPager.MainViewPagerFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.practice.mymovie.ConstantKey.DatabaseKey.DATABASE_NAME;
 import static com.practice.mymovie.ConstantKey.ParamsKey.*;
 import static com.practice.mymovie.ConstantKey.ConstantKey.*;
 import static com.practice.mymovie.ConstantKey.ServerUrl.*;
+import static com.practice.mymovie.DbHelper.CreateTable.createMovieDetailTable;
+import static com.practice.mymovie.DbHelper.CreateTable.createMovieListTable;
+import static com.practice.mymovie.DbHelper.CreateTable.createReviewTable;
+import static com.practice.mymovie.DbHelper.OpenDatabase.openDatabase;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -147,6 +155,14 @@ public class MainActivity extends AppCompatActivity
             AppHelper.requestQueue = Volley.newRequestQueue(this);
         }
 
+        //database open
+        OpenDatabase.openDatabase(this, DATABASE_NAME);
+
+        //database table create
+        CreateTable.createMovieListTable(this);
+        CreateTable.createMovieDetailTable(this);
+        CreateTable.createReviewTable(this);
+
         //인터넷 권한 확인 후, 인터넷 권한 있을 시에 서버로 요청 보낸다.
         String[] requiredPermissions = {Manifest.permission.INTERNET};
         int requestPermissionCode = 1;
@@ -208,6 +224,7 @@ public class MainActivity extends AppCompatActivity
         if (readMoiveList != null) {
             mMovieList = readMoiveList.getResult();
             loadViewPagerView(mMovieList);
+            InsertTable.updateMovieListTable(this, mMovieList);
         }
     }
 
@@ -228,10 +245,15 @@ public class MainActivity extends AppCompatActivity
         bundle.putParcelableArrayList(MOVIE_LIST, movieList);
         mainViewPagerFragment.setArguments(bundle);
         FragmentManager FM = getSupportFragmentManager();
-        if(FM != null)
+        if(FM != null) {
             FM.beginTransaction().add(R.id.flContainer_Main, mainViewPagerFragment).commit();
+            Toast.makeText(this, "서버에서 정보 불러오기 성공", Toast.LENGTH_SHORT).show();
+        }
     }
 
+
+    //영화 목록에서 상세보기 버튼이 클릭 됐을 때,
+    //서버에서 불러온 정보를 번들에 담아 fragment를 생성해 준다.
     private void loadDetailView(MovieDetail movieDetail, String id) {
         movieDetailViewFragment = new MovieDetailViewFragment();
         Bundle bundle = new Bundle();

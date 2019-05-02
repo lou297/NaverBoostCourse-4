@@ -17,6 +17,23 @@ public class MovieMain implements Parcelable {
     private String thumb;
     private String image;
 
+    public MovieMain(int id, String title, String title_eng, String date,
+                     double user_rating, double audience_rating, double reviewer_rating,
+                     double reservation_rate, int reservation_grade, int grade, String thumb, String image) {
+        this.id = id;
+        this.title = title;
+        this.title_eng = title_eng;
+        this.date = date;
+        this.user_rating = user_rating;
+        this.audience_rating = audience_rating;
+        this.reviewer_rating = reviewer_rating;
+        this.reservation_rate = reservation_rate;
+        this.reservation_grade = reservation_grade;
+        this.grade = grade;
+        this.thumb = thumb;
+        this.image = image;
+    }
+
     private MovieMain(Parcel in) {
         id = in.readInt();
         title = in.readString();
