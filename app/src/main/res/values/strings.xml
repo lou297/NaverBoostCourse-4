@@ -69,5 +69,55 @@
     <string name="comment_list_credits">%s (%d명 참여)</string>
 
 
+    <!--Toast 알림 글자-->
+    //////////////////////////////
+    <string name="server_request_success">서버에서 정보를 성공적으로 불러왔습니다</string>
+    
+    <string name="load_from_db">인터넷 연결이 없어 데이터베이스에서 정보를 읽어옵니다</string>
+    <string name="no_movie_list_in_db">데이터베이스에 저장된 영화 목록이 없습니다</string>
+    <string name="no_movie_detail_in_db">데이터베이스에 해당 영화 정보가 없습니다</string>
+    
+    <string name="database_is_null">데이터베이스가 존재하지 않습니다</string>
+
+    <string name="create_table_fail_movie_list">영화 목록 테이블 생성 실패</string>
+    <string name="create_table_fail_movie_detail">영화 정보 테이블 생성 실패</string>
+    <string name="create_table_fail_review">한줄평 목록 테이블 생성 실패</string>
+
+    <string name="insert_table_fail_movie_list">데이터베이스에 영화 목록을 저장하지 못하였습니다.</string>
+    <string name="insert_table_fail_movie_detail">데이터베이스에 영화 정보를 저장하지 못하였습니다.</string>
+    <string name="insert_table_fail_review">데이터베이스에 한줄평 목록을 저장하지 못하였습니다.</string>
+
+    <string name="delete_table_fail_movie_list">데이터베이스에서 영화 목록을 비우지 못하였습니다.</string>
+    <string name="delete_table_fail_movie_detail">데이터베이스에서 영화 정보를 비우지 못하였습니다.</string>
+    <string name="delete_table_fail_review">데이터베이스에서 한줄평을 비우지 못하였습니다.</string>
+    
+    <string name="save_table_success_movie_list">데이터베이스에 영화 목록을 저장하였습니다</string>
+    <string name="save_table_success_movie_detail">데이터베이스에 영화 정보를 저장하였습니다</string>
+    <string name="save_table_success_review">데이터베이스에 한줄평 목록을 저장하였습니다</string>
+    
+    <string name="select_table_fail_movie_list">데이터베이스에서 영화 목록을 불러오지 못했습니다</string>
+    <string name="select_table_fail_movie_detail">데이터베이스에서 영화 정보를 불러오지 못했습니다</string>
+    <string name="select_table_fail_review">데이터베이스에서 한줄평 목록을 불러오지 못했습니다</string>
+    /////////////////////////////////
+    
+    <string name="write_comment_fail">한줄평 작성 실패</string>
+    <string name="write_comment_success">한줄평 작성 성공</string>
+    
+    <string name="rating_point_min">평점을 0.5 이상 선택해 주세요</string>
+    <string name="comment_length_min">한줄평을 3글자 이상 입력해 주세요</string>
+    
+    <string name="write_comment_request_fail">한줄평 작성 요청이 정상적으로 서버로 보내지지 않았습니다</string>
+    <string name="load_comment_request_fail">한줄평 목록 불러오기가 실패하였습니다</string>
+    
+    <string name="apply_like_dislike_fail">좋아요/싫어요 서버 요청이 실패하였습니다</string>
+    <string name="setting_like_dislike_success">좋아요/싫어요 설정 저장이 성공하였습니다</string>
+    <string name="setting_like_dislike_fail">좋아요/싫어요 설정 저장이 실패하였습니다</string>
+
+    <string name="selected_nav_movie_list">영화 목록 메뉴가 선택되었습니다</string>
+    <string name="selected_nav_movie_api">영화 API 메뉴가 선택되었습니다</string>
+    <string name="selected_nav_reservation">영화 예매 메뉴가 선택되었습니다</string>
+    <string name="selected_nav_user_setting">사용자 설정 메뉴가 선택되었습니다</string>
+    
+    
 
 </resources>

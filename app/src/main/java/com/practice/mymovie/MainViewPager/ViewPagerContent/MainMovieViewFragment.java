@@ -21,6 +21,9 @@ import com.practice.mymovie.R;
 
 import static com.practice.mymovie.ConstantKey.ConstantKey.*;
 
+//앱 시작 후 보이는 ViewPager 영화 목록들 중 하나의 페이지를 보여주기 위한 class이다.
+//MainViewPagerFragment에서 영화 정보를 bundle을 통해 넘겨 받아 화면에 띄워준다.
+
 public class MainMovieViewFragment extends Fragment {
     private MovieMain mMovie;
     private MainActivity mActivity;

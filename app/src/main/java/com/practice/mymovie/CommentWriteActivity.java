@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,9 +18,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.practice.mymovie.DataClass.ReadCommentList.Comment;
-import com.practice.mymovie.DataClass.ReadCommentList.ReadCommentList;
 import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
 import com.practice.mymovie.DataClass.ResponseResult.ResponseResult;
+import com.practice.mymovie.NetWork.NetworkHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,6 +30,10 @@ import java.util.Map;
 import static com.practice.mymovie.ConstantKey.ParamsKey.*;
 import static com.practice.mymovie.ConstantKey.ConstantKey.*;
 import static com.practice.mymovie.ConstantKey.ServerUrl.*;
+import static com.practice.mymovie.ConstantKey.MovieGrade.*;
+import static com.practice.mymovie.ConstantKey.NetWorkStatusKey.*;
+
+//한줄평 작성하기 버튼 클릭 시 실행되는 class이다.
 
 public class CommentWriteActivity extends AppCompatActivity {
     private Button btnSave;
@@ -85,13 +88,13 @@ public class CommentWriteActivity extends AppCompatActivity {
 
             tvMovieTitle.setText(mMovie.getTitle());
             switch (mMovie.getGrade()) {
-                case 12:
+                case GRADE_12:
                     ivMovieRating.setBackgroundResource(R.drawable.ic_12);
                     break;
-                case 15:
+                case GRADE_15:
                     ivMovieRating.setBackgroundResource(R.drawable.ic_15);
                     break;
-                case 19:
+                case GRADE_19:
                     ivMovieRating.setBackgroundResource(R.drawable.ic_19);
                     break;
                 default:
@@ -104,11 +107,11 @@ public class CommentWriteActivity extends AppCompatActivity {
     private void saveContent() {
         boolean checkContent = true;
         if (RatingBar.getRating() < 0.5F) {
-            Toast.makeText(this, "평점을 0.5이상 체크해주세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.rating_point_min), Toast.LENGTH_SHORT).show();
             checkContent = false;
         }
         if (etComment.getText() == null || etComment.getText().toString().length() < 3) {
-            Toast.makeText(this, "3글자 이상의 리뷰를 작성해 주세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.comment_length_min), Toast.LENGTH_SHORT).show();
             checkContent = false;
         }
 
@@ -141,7 +144,7 @@ public class CommentWriteActivity extends AppCompatActivity {
     }
 
     private void sendRequest(String addUrl, final Map<String, String> params, final Comment comment) {
-        String url = "http://boostcourse-appapi.connect.or.kr:10000" + addUrl;
+        String url = MAIN_URL + addUrl;
 
         StringRequest stringRequest = new StringRequest(
                 Request.Method.POST,
@@ -176,14 +179,14 @@ public class CommentWriteActivity extends AppCompatActivity {
         ResponseResult responseResult = gson.fromJson(response, ResponseResult.class);
         if (responseResult != null) {
             switch (responseResult.getCode()){
-                case 200:
+                case NETWORK_RESULT_OK:
                     Intent intent = new Intent();
                     intent.putExtra(COMMENT, comment);
                     setResult(RESULT_OK, intent);
                     finish();
                     break;
-                case 400:
-                    Toast.makeText(this, "한줄평 작성 요청을 서버로 보내는데 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                case NETWORK_RESULT_FAIL:
+                    Toast.makeText(this, getString(R.string.write_comment_request_fail), Toast.LENGTH_SHORT).show();
                     break;
             }
         }

@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
 public class OpenDatabase {
+    //database를 여는 메소드를 위한 클래스이다.
     static SQLiteDatabase database;
 
     public static void openDatabase(Context context, String databaseName) {

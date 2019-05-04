@@ -7,12 +7,15 @@ import android.widget.Toast;
 import com.practice.mymovie.DataClass.ReadCommentList.Comment;
 import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
 import com.practice.mymovie.DataClass.ReadMovieList.MovieMain;
+import com.practice.mymovie.R;
 
 import java.util.ArrayList;
 
 import static com.practice.mymovie.DbHelper.OpenDatabase.database;
 
 public class SelectTable {
+    //DB에 저장된 데이터들을 읽어와 화면에 띄우기 위한 메소드들이다.
+    //해당 메소드들은 화면을 띄우기 위해 필요한 정보를 return해준다.
 
     public static ArrayList<MovieMain> selectMovieListTable(Context context) {
         String selectSql = "select id, title, title_eng, date, user_rating, audience_rating, reviewer_rating, " +
@@ -38,7 +41,8 @@ public class SelectTable {
                 movieList.add(movieMain);
             }
         } catch (Exception e) {
-            Toast.makeText(context, "movie_list table select 실패\n" + e.toString(), Toast.LENGTH_SHORT).show();
+            if (context != null)
+                Toast.makeText(context, context.getString(R.string.select_table_fail_movie_list) + e.toString(), Toast.LENGTH_SHORT).show();
         }
 
         return movieList;
@@ -53,7 +57,7 @@ public class SelectTable {
         try {
             String[] params = {String.valueOf(movieId)};
             Cursor cursor = database.rawQuery(selectSql, params);
-            while(cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
                 int movie_id = cursor.getInt(0);
                 String title = cursor.getString(1);
                 String date = cursor.getString(2);
@@ -81,7 +85,8 @@ public class SelectTable {
                         thumb, image, photos, videos, outlinks, genre, duration, audience, synopsis, director, actor, like_num, dislike_num);
             }
         } catch (Exception e) {
-            Toast.makeText(context, "movie detail table select 실패\n" + e.toString(), Toast.LENGTH_SHORT).show();
+            if (context != null)
+                Toast.makeText(context, context.getString(R.string.select_table_fail_movie_detail) + e.toString(), Toast.LENGTH_SHORT).show();
         }
 
         return movieDetail;
@@ -109,7 +114,8 @@ public class SelectTable {
                 commentList.add(comment);
             }
         } catch (Exception e) {
-            Toast.makeText(context, "review table select 실패\n" + e.toString(), Toast.LENGTH_SHORT).show();
+            if (context != null)
+                Toast.makeText(context, context.getString(R.string.select_table_fail_review) + e.toString(), Toast.LENGTH_SHORT).show();
         }
 
         return commentList;

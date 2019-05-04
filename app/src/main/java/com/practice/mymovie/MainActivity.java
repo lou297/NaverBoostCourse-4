@@ -1,11 +1,9 @@
 package com.practice.mymovie;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -27,7 +25,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
-import com.practice.mymovie.DataClass.ReadCommentList.Comment;
 import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
 import com.practice.mymovie.DataClass.ReadMovie.ReadMovie;
 import com.practice.mymovie.DataClass.ReadMovieList.MovieMain;
@@ -37,6 +34,7 @@ import com.practice.mymovie.DbHelper.InsertTable;
 import com.practice.mymovie.DbHelper.OpenDatabase;
 import com.practice.mymovie.DbHelper.SelectTable;
 import com.practice.mymovie.MainViewPager.MainViewPagerFragment;
+import com.practice.mymovie.NetWork.NetworkHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,10 +45,6 @@ import static com.practice.mymovie.ConstantKey.NetWorkStatusKey.TYPE_NOT_CONNECT
 import static com.practice.mymovie.ConstantKey.ParamsKey.*;
 import static com.practice.mymovie.ConstantKey.ConstantKey.*;
 import static com.practice.mymovie.ConstantKey.ServerUrl.*;
-import static com.practice.mymovie.DbHelper.CreateTable.createMovieDetailTable;
-import static com.practice.mymovie.DbHelper.CreateTable.createMovieListTable;
-import static com.practice.mymovie.DbHelper.CreateTable.createReviewTable;
-import static com.practice.mymovie.DbHelper.OpenDatabase.openDatabase;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -118,16 +112,16 @@ public class MainActivity extends AppCompatActivity
 
             switch (id) {
                 case R.id.nav_movieList:
-                    Toast.makeText(this, "nav_menu 영화 목록 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.selected_nav_movie_list), Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.nav_movieAPI:
-                    Toast.makeText(this, "nav_menu 영화 API 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.selected_nav_movie_api), Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.nav_reservation:
-                    Toast.makeText(this, "nav_menu 예매하기 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.selected_nav_reservation), Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.nav_userSetting:
-                    Toast.makeText(this, "nav_menu 사용자 설정 메뉴 클릭 됨", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.selected_nav_user_setting), Toast.LENGTH_SHORT).show();
                     break;
             }
         }
@@ -181,10 +175,10 @@ public class MainActivity extends AppCompatActivity
         // 인터넷이 연결된 경우, 서버에 요청을 보내고.
         // 인터넷이 연결되지 않은 경우 DB에서 가져온다.
         if(NetworkHelper.getNetWorkStatus(this) == TYPE_NOT_CONNECTED) {
-            Toast.makeText(this, "인터넷 연결이 없어 DB에서 영화 목록을 가져옵니다", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.load_from_db), Toast.LENGTH_SHORT).show();
             mMovieList = SelectTable.selectMovieListTable(this);
             if(mMovieList.size() == 0) {
-                Toast.makeText(this, "DB에 저장된 영화 목록이 없습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.no_movie_list_in_db), Toast.LENGTH_SHORT).show();
             }
             loadViewPagerView(mMovieList);
         } else {
@@ -196,7 +190,7 @@ public class MainActivity extends AppCompatActivity
 
     //index -> 1) MainViewPager  2) MovieDetailView
     private void sendRequest(String addUrl, final Map<String, String> params, final int index) {
-        String url = "http://boostcourse-appapi.connect.or.kr:10000" + addUrl;
+        String url = MAIN_URL + addUrl;
 
         StringRequest stringRequest = new StringRequest(
                 Request.Method.POST,
@@ -241,7 +235,7 @@ public class MainActivity extends AppCompatActivity
         if (readMoiveList != null) {
             mMovieList = readMoiveList.getResult();
             loadViewPagerView(mMovieList);
-            Toast.makeText(this, "서버에서 정보 불러오기 성공", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.server_request_success), Toast.LENGTH_SHORT).show();
             InsertTable.updateMovieListTable(this, mMovieList);
         }
     }
@@ -290,12 +284,12 @@ public class MainActivity extends AppCompatActivity
     //영화 상세 화면에 내용을 담아 띄워준다.
     public void goToDetailView(int id) {
         if(NetworkHelper.getNetWorkStatus(this) == TYPE_NOT_CONNECTED){
-            Toast.makeText(this, "인터넷 연결이 없어 DB에서 정보를 가져옵니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.load_from_db), Toast.LENGTH_SHORT).show();
             MovieDetail movieDetail = SelectTable.selectMovieDetailTable(this, id);
             if(movieDetail != null) {
                 loadDetailView(movieDetail, String.valueOf(id));
             } else {
-                Toast.makeText(this, "DB에 해당 영화 정보가 없습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.no_movie_detail_in_db), Toast.LENGTH_SHORT).show();
             }
         } else {
             Map<String, String> map = new HashMap<>();
@@ -334,6 +328,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        //인터넷 접속 권한이 있는지 확인한다.
         if (requestCode == 1 && grantResults.length == 1) {
             boolean check = true;
 

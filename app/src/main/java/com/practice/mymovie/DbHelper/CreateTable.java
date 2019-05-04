@@ -3,6 +3,8 @@ package com.practice.mymovie.DbHelper;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.practice.mymovie.R;
+
 import static com.practice.mymovie.DbHelper.OpenDatabase.database;
 
 public class CreateTable {
@@ -31,10 +33,12 @@ public class CreateTable {
             try{
                 database.execSQL(createTableSql);
             } catch (Exception e) {
-                Toast.makeText(context, "영화 목록 테이블 생성 실패\n" + e.toString(), Toast.LENGTH_SHORT).show();
+                if(context != null)
+                    Toast.makeText(context, context.getString(R.string.create_table_fail_movie_list) + e.toString(), Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(context, "database is null", Toast.LENGTH_SHORT).show();
+            if(context != null)
+                Toast.makeText(context, context.getString(R.string.database_is_null), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -74,10 +78,12 @@ public class CreateTable {
             try{
                 database.execSQL(createTableSql);
             } catch (Exception e) {
-                Toast.makeText(context, "영화 정보 테이블 생성 실패\n" + e.toString(), Toast.LENGTH_SHORT).show();
+                if(context != null)
+                    Toast.makeText(context, context.getString(R.string.create_table_fail_movie_detail) + e.toString(), Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(context, "database is null", Toast.LENGTH_SHORT).show();
+            if(context != null)
+                Toast.makeText(context, context.getString(R.string.database_is_null), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -101,10 +107,12 @@ public class CreateTable {
             try{
                 database.execSQL(createTableSql);
             } catch (Exception e) {
-                Toast.makeText(context, "한줄평 목록 테이블 생성 실패\n" + e.toString(), Toast.LENGTH_SHORT).show();
+                if(context != null)
+                    Toast.makeText(context, context.getString(R.string.create_table_fail_review) + e.toString(), Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(context, "database is null", Toast.LENGTH_SHORT).show();
+            if(context != null)
+                Toast.makeText(context, context.getString(R.string.database_is_null), Toast.LENGTH_SHORT).show();
         }
     }
 

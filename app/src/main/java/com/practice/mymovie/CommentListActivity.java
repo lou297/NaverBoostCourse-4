@@ -21,6 +21,10 @@ import java.util.ArrayList;
 
 import static com.practice.mymovie.ConstantKey.ConstantKey.*;
 import static com.practice.mymovie.ConstantKey.ActivityResultKey.*;
+import static com.practice.mymovie.ConstantKey.MovieGrade.*;
+
+//한줄 평 목록 모두 보기 클릭 시 띄워지는 class이다.
+//해당 class에서 전체 한줄 평 목록을 볼 수 있다.
 
 public class CommentListActivity extends AppCompatActivity {
     private TextView tvMovieTitle;
@@ -56,12 +60,12 @@ public class CommentListActivity extends AppCompatActivity {
         if (requestCode == WRITE_COMMENT_FROM_COMMENT_LIST) {
             if (resultCode == RESULT_OK) {
                 if (data == null) {
-                    Toast.makeText(this, "한줄평 작성 불러오기 실패", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.write_comment_fail), Toast.LENGTH_SHORT).show();
                 } else {
                     Comment comment = data.getParcelableExtra(COMMENT);
                     mCommentList.add(0, comment);
                     mCommentAdapter.notifyDataSetChanged();
-                    Toast.makeText(this, "한줄평 작성 저장 완료", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.write_comment_success), Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -102,6 +106,7 @@ public class CommentListActivity extends AppCompatActivity {
     }
 
     private void readIntent(Intent intent) {
+        //영화에 대한 정보를 intent를 통해 가져와 화면에 보여준다.
         if (intent != null) {
             mMovie = intent.getParcelableExtra(MOVIE);
             mMovieId = intent.getStringExtra(ID);
@@ -109,13 +114,13 @@ public class CommentListActivity extends AppCompatActivity {
 
             tvMovieTitle.setText(mMovie.getTitle());
             switch (mMovie.getGrade()) {
-                case 12:
+                case GRADE_12:
                     ivMovieRating.setBackgroundResource(R.drawable.ic_12);
                     break;
-                case 15:
+                case GRADE_15:
                     ivMovieRating.setBackgroundResource(R.drawable.ic_15);
                     break;
-                case 19:
+                case GRADE_19:
                     ivMovieRating.setBackgroundResource(R.drawable.ic_19);
                     break;
                 default:
@@ -138,10 +143,9 @@ public class CommentListActivity extends AppCompatActivity {
                 total += mCommentList.get(i).getRating();
             }
             float average = total / (float) numOfReviewers;
-            average = Math.round((average*100)/100.0);
 
             commentRatingBar.setRating(average);
-            movieCredits = String.format(getString(R.string.comment_list_credits), String.valueOf(average), numOfReviewers);
+            movieCredits = String.format(getString(R.string.comment_list_credits), String.format("%.2f", average), numOfReviewers);
         } else {
             movieCredits = String.format(getString(R.string.comment_list_credits), "0", 0);
         }

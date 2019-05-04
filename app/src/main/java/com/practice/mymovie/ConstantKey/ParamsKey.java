@@ -1,6 +1,7 @@
 package com.practice.mymovie.ConstantKey;
 
 public final class ParamsKey {
+    //서버로 요청보내는 파라미터 값들의 key
     public static final String PARAMS_ID = "id";
     public static final String PARAMS_REVIEW_ID = "review_id";
     public static final String PARAMS_RATING = "rating";

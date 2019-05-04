@@ -17,7 +17,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.practice.mymovie.DataClass.ReadCommentList.Comment;
 import com.practice.mymovie.DataClass.ResponseResult.ResponseResult;
-import com.practice.mymovie.NetworkHelper;
+import com.practice.mymovie.NetWork.NetworkHelper;
 import com.practice.mymovie.R;
 
 import java.util.HashMap;
@@ -25,6 +25,8 @@ import java.util.Map;
 
 import static com.practice.mymovie.ConstantKey.ParamsKey.PARAMS_REVIEW_ID;
 import static com.practice.mymovie.ConstantKey.ServerUrl.INCREASE_RECOMMEND;
+import static com.practice.mymovie.ConstantKey.NetWorkStatusKey.*;
+import static com.practice.mymovie.ConstantKey.ServerUrl.*;
 
 public class CommentItemView extends LinearLayout {
     private TextView tvCommentId;
@@ -42,8 +44,12 @@ public class CommentItemView extends LinearLayout {
     }
 
     private void init(Context context) {
-        if(context != null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mContext = context;
+        if(mContext == null) {
+            mContext = getContext();
+        }
+        if(mContext != null) {
+            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             inflater.inflate(R.layout.view_comment_item, this, true);
 
             tvCommentId = findViewById(R.id.tvCommentId);
@@ -51,8 +57,6 @@ public class CommentItemView extends LinearLayout {
             commentRatingBar = findViewById(R.id.commentRatingBar_CommentItemView);
             tvComment = findViewById(R.id.tvComment);
             tvCommentNumOfRecommend = findViewById(R.id.tvCommentNumOfRecommend);
-
-            mContext = context;
         }
     }
 
@@ -74,17 +78,22 @@ public class CommentItemView extends LinearLayout {
             tvCommentNumOfRecommend.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Map<String, String> params = new HashMap<>();
-
-                    params.put(PARAMS_REVIEW_ID, String.valueOf(item.getId()));
-                    sendRequest(INCREASE_RECOMMEND, params);
+                    //한줄평의 '추천 %d'의 글자를 누르면 한줄평 추천 수가 올라간다.
+                    startRecommendButClickEvent(String.valueOf(item.getId()));
                 }
             });
         }
     }
 
+    private void startRecommendButClickEvent(String review_id) {
+        Map<String, String> params = new HashMap<>();
+
+        params.put(PARAMS_REVIEW_ID, review_id);
+        sendRequest(INCREASE_RECOMMEND, params);
+    }
+
     private void sendRequest(String addUrl, final Map<String, String> params) {
-        String url = "http://boostcourse-appapi.connect.or.kr:10000/" + addUrl;
+        String url = MAIN_URL + addUrl;
 
         StringRequest stringRequest = new StringRequest(
                 Request.Method.POST,
@@ -122,12 +131,12 @@ public class CommentItemView extends LinearLayout {
 
         if (result != null) {
             switch (result.getCode()){
-                case 200:
+                case NETWORK_RESULT_OK:
                     iCommentNumOfRecoomend++;
                     tvCommentNumOfRecommend.setText(String.format(mContext.getString(R.string.comment_view_recommend), iCommentNumOfRecoomend));
                     Toast.makeText(mContext, result.getMessage(), Toast.LENGTH_SHORT).show();
                     break;
-                case 400:
+                case NETWORK_RESULT_FAIL:
                     Toast.makeText(mContext, result.getMessage(), Toast.LENGTH_SHORT).show();
                     break;
             }

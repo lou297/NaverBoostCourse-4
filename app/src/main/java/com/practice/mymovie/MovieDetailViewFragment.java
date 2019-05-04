@@ -31,16 +31,19 @@ import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
 import com.practice.mymovie.DataClass.ResponseResult.ResponseResult;
 import com.practice.mymovie.DbHelper.InsertTable;
 import com.practice.mymovie.DbHelper.SelectTable;
+import com.practice.mymovie.NetWork.NetworkHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.practice.mymovie.ConstantKey.NetWorkStatusKey.NETWORK_RESULT_OK;
 import static com.practice.mymovie.ConstantKey.NetWorkStatusKey.TYPE_NOT_CONNECTED;
 import static com.practice.mymovie.ConstantKey.ParamsKey.*;
 import static com.practice.mymovie.ConstantKey.ConstantKey.*;
 import static com.practice.mymovie.ConstantKey.ServerUrl.*;
 import static com.practice.mymovie.ConstantKey.ActivityResultKey.*;
+import static com.practice.mymovie.ConstantKey.MovieGrade.*;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -133,9 +136,7 @@ public class MovieDetailViewFragment extends Fragment
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == WRITE_COMMENT_FROM_MOVIE_DETAIL_VIEW) {
             if (resultCode == RESULT_OK)
-                Toast.makeText(getContext(), "한줄평 작성 저장 버튼 눌림", Toast.LENGTH_SHORT).show();
-            else
-                Toast.makeText(getContext(), "한줄평 작성 취소됨", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, getString(R.string.write_comment_success), Toast.LENGTH_SHORT).show();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -269,13 +270,13 @@ public class MovieDetailViewFragment extends Fragment
             Glide.with(mActivity).load(mMovie.getImage()).into(ivMoviePoster);
             tvMovieTitle.setText(mMovie.getTitle());
             switch (mMovie.getGrade()) {
-                case 12:
+                case GRADE_12:
                     ivMovieRating.setBackgroundResource(R.drawable.ic_12);
                     break;
-                case 15:
+                case GRADE_15:
                     ivMovieRating.setBackgroundResource(R.drawable.ic_15);
                     break;
-                case 19:
+                case GRADE_19:
                     ivMovieRating.setBackgroundResource(R.drawable.ic_19);
                     break;
                 default:
@@ -300,7 +301,7 @@ public class MovieDetailViewFragment extends Fragment
     }
 
     private void sendRequest(String addUrl, final Map<String, String> params, final int index) {
-        String url = "http://boostcourse-appapi.connect.or.kr:10000/" + addUrl;
+        String url = MAIN_URL + addUrl;
 
         StringRequest stringRequest = new StringRequest(
                 Request.Method.POST,
@@ -326,10 +327,10 @@ public class MovieDetailViewFragment extends Fragment
                     public void onErrorResponse(VolleyError error) {
                         switch (index) {
                             case 3:
-                                Toast.makeText(mActivity, "리뷰 목록 불러오기 실패", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mActivity, getString(R.string.load_comment_request_fail), Toast.LENGTH_SHORT).show();
                                 break;
                             default:
-                                Toast.makeText(mActivity, "좋아요/ 싫어요 버튼 적용 실패", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mActivity, getString(R.string.apply_like_dislike_fail), Toast.LENGTH_SHORT).show();
                                 break;
                         }
 
@@ -375,8 +376,8 @@ public class MovieDetailViewFragment extends Fragment
         Gson gson = new Gson();
         ResponseResult result = gson.fromJson(response, ResponseResult.class);
 
-        if (result != null && result.getCode() == 200) {
-            Toast.makeText(mActivity, "좋아요/ 싫어요 설정이 적용됐습니다.", Toast.LENGTH_SHORT).show();
+        if (result != null && result.getCode() == NETWORK_RESULT_OK) {
+            Toast.makeText(mActivity, getString(R.string.setting_like_dislike_success), Toast.LENGTH_SHORT).show();
             switch (index) {
                 case 1:
                     controlThumbUpRate();
@@ -386,7 +387,7 @@ public class MovieDetailViewFragment extends Fragment
                     break;
             }
         } else {
-            Toast.makeText(mActivity, "좋아요/ 싫어요 설정이 적용되지 못했습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, getString(R.string.setting_like_dislike_fail), Toast.LENGTH_SHORT).show();
         }
 
 

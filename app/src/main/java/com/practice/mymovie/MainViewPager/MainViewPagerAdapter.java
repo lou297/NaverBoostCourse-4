@@ -9,6 +9,8 @@ import com.practice.mymovie.MainViewPager.ViewPagerContent.MainMovieViewFragment
 
 import java.util.ArrayList;
 
+//앱 시작 후 보이는 View Pager 영화 목록을 위한 adapter이다.
+
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     private ArrayList<MainMovieViewFragment> list;
     public MainViewPagerAdapter(FragmentManager fm, ArrayList<MainMovieViewFragment> list) {

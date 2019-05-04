@@ -1,4 +1,4 @@
-package com.practice.mymovie;
+package com.practice.mymovie.NetWork;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
