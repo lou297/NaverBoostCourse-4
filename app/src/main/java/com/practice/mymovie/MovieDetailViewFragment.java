@@ -29,11 +29,14 @@ import com.practice.mymovie.DataClass.ReadCommentList.Comment;
 import com.practice.mymovie.DataClass.ReadCommentList.ReadCommentList;
 import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
 import com.practice.mymovie.DataClass.ResponseResult.ResponseResult;
+import com.practice.mymovie.DbHelper.InsertTable;
+import com.practice.mymovie.DbHelper.SelectTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.practice.mymovie.ConstantKey.NetWorkStatusKey.TYPE_NOT_CONNECTED;
 import static com.practice.mymovie.ConstantKey.ParamsKey.*;
 import static com.practice.mymovie.ConstantKey.ConstantKey.*;
 import static com.practice.mymovie.ConstantKey.ServerUrl.*;
@@ -343,7 +346,7 @@ public class MovieDetailViewFragment extends Fragment
             }
         };
 
-        AppHelper.requestQueue.add(stringRequest);
+        NetworkHelper.requestQueue.add(stringRequest);
     }
 
     private void processResquest_ReadCommentList(String response) {
@@ -356,6 +359,9 @@ public class MovieDetailViewFragment extends Fragment
                 mCommentAdapter = new CommentAdapter(getContext(), mCommentList);
                 ListView listView = getView().findViewById(R.id.commentListView_Main);
                 listView.setAdapter(mCommentAdapter);
+
+                //리뷰 목록을 DB에 저장해준다.
+                InsertTable.updateReviewTable(mActivity, Integer.parseInt(mMovieId), mCommentList);
             }
         }
         if (svMainContainer != null) {
@@ -390,10 +396,19 @@ public class MovieDetailViewFragment extends Fragment
     private void loadComment() {
 //        임의의 한줄평 목록을 생성해 준다.
         if (mMovieId != null) {
-            Map<String, String> params = new HashMap<>();
-            params.put(PARAMS_ID, mMovieId);
-            params.put(PARAMS_LIMIT, "all");
-            sendRequest(READ_COMMENT_LIST, params, 3);
+            if(NetworkHelper.getNetWorkStatus(mActivity) == TYPE_NOT_CONNECTED) {
+                mCommentList = SelectTable.selectReviewTable(mActivity, Integer.parseInt(mMovieId));
+                if (mCommentList != null) {
+                    mCommentAdapter = new CommentAdapter(getContext(), mCommentList);
+                    ListView listView = getView().findViewById(R.id.commentListView_Main);
+                    listView.setAdapter(mCommentAdapter);
+                }
+            } else {
+                Map<String, String> params = new HashMap<>();
+                params.put(PARAMS_ID, mMovieId);
+                params.put(PARAMS_LIMIT, "all");
+                sendRequest(READ_COMMENT_LIST, params, 3);
+            }
         }
     }
 

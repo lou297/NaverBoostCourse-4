@@ -15,9 +15,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
-import com.practice.mymovie.AppHelper;
 import com.practice.mymovie.DataClass.ReadCommentList.Comment;
 import com.practice.mymovie.DataClass.ResponseResult.ResponseResult;
+import com.practice.mymovie.NetworkHelper;
 import com.practice.mymovie.R;
 
 import java.util.HashMap;
@@ -113,7 +113,7 @@ public class CommentItemView extends LinearLayout {
             }
         };
 
-        AppHelper.requestQueue.add(stringRequest);
+        NetworkHelper.requestQueue.add(stringRequest);
     }
 
     private void processResponse(String response) {

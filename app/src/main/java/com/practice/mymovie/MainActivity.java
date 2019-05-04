@@ -35,6 +35,7 @@ import com.practice.mymovie.DataClass.ReadMovieList.ReadMovieList;
 import com.practice.mymovie.DbHelper.CreateTable;
 import com.practice.mymovie.DbHelper.InsertTable;
 import com.practice.mymovie.DbHelper.OpenDatabase;
+import com.practice.mymovie.DbHelper.SelectTable;
 import com.practice.mymovie.MainViewPager.MainViewPagerFragment;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.practice.mymovie.ConstantKey.DatabaseKey.DATABASE_NAME;
+import static com.practice.mymovie.ConstantKey.NetWorkStatusKey.TYPE_NOT_CONNECTED;
 import static com.practice.mymovie.ConstantKey.ParamsKey.*;
 import static com.practice.mymovie.ConstantKey.ConstantKey.*;
 import static com.practice.mymovie.ConstantKey.ServerUrl.*;
@@ -151,8 +153,8 @@ public class MainActivity extends AppCompatActivity
 
     private void startAppSetting() {
         //requestQueue 준비
-        if (AppHelper.requestQueue == null) {
-            AppHelper.requestQueue = Volley.newRequestQueue(this);
+        if (NetworkHelper.requestQueue == null) {
+            NetworkHelper.requestQueue = Volley.newRequestQueue(this);
         }
 
         //database open
@@ -169,11 +171,26 @@ public class MainActivity extends AppCompatActivity
         //permission 확인
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            loadMovieList();
+        } else {
+            ActivityCompat.requestPermissions(this, requiredPermissions, requestPermissionCode);
+        }
+    }
+
+    private void loadMovieList() {
+        // 인터넷이 연결된 경우, 서버에 요청을 보내고.
+        // 인터넷이 연결되지 않은 경우 DB에서 가져온다.
+        if(NetworkHelper.getNetWorkStatus(this) == TYPE_NOT_CONNECTED) {
+            Toast.makeText(this, "인터넷 연결이 없어 DB에서 영화 목록을 가져옵니다", Toast.LENGTH_SHORT).show();
+            mMovieList = SelectTable.selectMovieListTable(this);
+            if(mMovieList.size() == 0) {
+                Toast.makeText(this, "DB에 저장된 영화 목록이 없습니다.", Toast.LENGTH_SHORT).show();
+            }
+            loadViewPagerView(mMovieList);
+        } else {
             Map<String, String> map = new HashMap<>();
             map.put(PARAMS_TYPE, "1");
             sendRequest(READ_MOVIE_LIST, map, 1);
-        } else {
-            ActivityCompat.requestPermissions(this, requiredPermissions, requestPermissionCode);
         }
     }
 
@@ -215,7 +232,7 @@ public class MainActivity extends AppCompatActivity
             }
         };
 
-        AppHelper.requestQueue.add(stringRequest);
+        NetworkHelper.requestQueue.add(stringRequest);
     }
 
     private void processRequest_ReadMovieList(String response) {
@@ -224,6 +241,7 @@ public class MainActivity extends AppCompatActivity
         if (readMoiveList != null) {
             mMovieList = readMoiveList.getResult();
             loadViewPagerView(mMovieList);
+            Toast.makeText(this, "서버에서 정보 불러오기 성공", Toast.LENGTH_SHORT).show();
             InsertTable.updateMovieListTable(this, mMovieList);
         }
     }
@@ -233,8 +251,10 @@ public class MainActivity extends AppCompatActivity
         ReadMovie readMovie = gson.fromJson(response, ReadMovie.class);
         if (readMovie != null) {
             ArrayList<MovieDetail> readMovieResult = readMovie.getResult();
-            if (!readMovieResult.isEmpty())
+            if (!readMovieResult.isEmpty()) {
                 loadDetailView(readMovieResult.get(0), id);
+                InsertTable.updateMovieDetailTable(this, Integer.parseInt(id), readMovieResult.get(0));
+            }
         }
     }
 
@@ -247,7 +267,6 @@ public class MainActivity extends AppCompatActivity
         FragmentManager FM = getSupportFragmentManager();
         if(FM != null) {
             FM.beginTransaction().add(R.id.flContainer_Main, mainViewPagerFragment).commit();
-            Toast.makeText(this, "서버에서 정보 불러오기 성공", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -270,9 +289,19 @@ public class MainActivity extends AppCompatActivity
     //영화 정보를 넘겨준다.
     //영화 상세 화면에 내용을 담아 띄워준다.
     public void goToDetailView(int id) {
-        Map<String, String> map = new HashMap<>();
-        map.put(PARAMS_ID, String.valueOf(id));
-        sendRequest(READ_MOVIE, map, 2);
+        if(NetworkHelper.getNetWorkStatus(this) == TYPE_NOT_CONNECTED){
+            Toast.makeText(this, "인터넷 연결이 없어 DB에서 정보를 가져옵니다.", Toast.LENGTH_SHORT).show();
+            MovieDetail movieDetail = SelectTable.selectMovieDetailTable(this, id);
+            if(movieDetail != null) {
+                loadDetailView(movieDetail, String.valueOf(id));
+            } else {
+                Toast.makeText(this, "DB에 해당 영화 정보가 없습니다.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Map<String, String> map = new HashMap<>();
+            map.put(PARAMS_ID, String.valueOf(id));
+            sendRequest(READ_MOVIE, map, 2);
+        }
     }
 
 
@@ -317,9 +346,7 @@ public class MainActivity extends AppCompatActivity
 
             if (check) {
                 //권한을 확인 받은 경우 요청을 보낸다.
-                Map<String, String> map = new HashMap<>();
-                map.put(PARAMS_TYPE, "1");
-                sendRequest(READ_MOVIE_LIST, map, 1);
+                loadMovieList();
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

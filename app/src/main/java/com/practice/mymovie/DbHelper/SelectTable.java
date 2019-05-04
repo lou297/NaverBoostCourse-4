@@ -16,7 +16,7 @@ public class SelectTable {
 
     public static ArrayList<MovieMain> selectMovieListTable(Context context) {
         String selectSql = "select id, title, title_eng, date, user_rating, audience_rating, reviewer_rating, " +
-                "reservation_rate, reservation_grage, grade, thumb, image " +
+                "reservation_rate, reservation_grade, grade, thumb, image " +
                 "from movie_list";
         ArrayList<MovieMain> movieList = new ArrayList<>();
         try {
@@ -38,14 +38,15 @@ public class SelectTable {
                 movieList.add(movieMain);
             }
         } catch (Exception e) {
-            Toast.makeText(context, "movie_list table select 실패", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "movie_list table select 실패\n" + e.toString(), Toast.LENGTH_SHORT).show();
         }
+
         return movieList;
     }
 
     public static MovieDetail selectMovieDetailTable(Context context, int movieId) {
         String selectSql = "select movie_id, title, date, user_rating, audience_rating, reviewer_rating, reservation_rate, " +
-                "resrvation_grade, grade, thumb, image, photos, videos, outlinks, genre, duration, audience, " +
+                "reservation_grade, grade, thumb, image, photos, videos, outlinks, genre, duration, audience, " +
                 "synopsis, director, actor, like_num, dislike_num " +
                 "from movie_detail where movie_id = ?";
         MovieDetail movieDetail = null;
@@ -80,14 +81,14 @@ public class SelectTable {
                         thumb, image, photos, videos, outlinks, genre, duration, audience, synopsis, director, actor, like_num, dislike_num);
             }
         } catch (Exception e) {
-            Toast.makeText(context, "movie detail table select 실패", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "movie detail table select 실패\n" + e.toString(), Toast.LENGTH_SHORT).show();
         }
-        
+
         return movieDetail;
     }
 
     public static ArrayList<Comment> selectReviewTable(Context context, int movieId) {
-        String selectSql = "select id, writer, movie_id, wrter_image, time, timestamp, rating, contents, recommend from review where movie_id = ?";
+        String selectSql = "select id, writer, movie_id, writer_image, time, timestamp, rating, contents, recommend from review where movie_id = ?";
         ArrayList<Comment> commentList = new ArrayList<>();
 
         try {
@@ -108,7 +109,7 @@ public class SelectTable {
                 commentList.add(comment);
             }
         } catch (Exception e) {
-            Toast.makeText(context, "review table select 실패", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "review table select 실패\n" + e.toString(), Toast.LENGTH_SHORT).show();
         }
 
         return commentList;

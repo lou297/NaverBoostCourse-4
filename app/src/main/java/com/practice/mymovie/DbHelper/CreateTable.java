@@ -31,7 +31,7 @@ public class CreateTable {
             try{
                 database.execSQL(createTableSql);
             } catch (Exception e) {
-                Toast.makeText(context, "영화 목록 테이블 생성 실패", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "영화 목록 테이블 생성 실패\n" + e.toString(), Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(context, "database is null", Toast.LENGTH_SHORT).show();
@@ -53,7 +53,7 @@ public class CreateTable {
                         "audience_rating    double, " +
                         "reviewer_rating    double, " +
                         "reservation_rate   double, " +
-                        "reservation_grage  integer, " +
+                        "reservation_grade  integer, " +
                         "grade              integer, " +
                         "thumb              text, " +
                         "image              text, " +
@@ -74,7 +74,7 @@ public class CreateTable {
             try{
                 database.execSQL(createTableSql);
             } catch (Exception e) {
-                Toast.makeText(context, "영화 정보 테이블 생성 실패", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "영화 정보 테이블 생성 실패\n" + e.toString(), Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(context, "database is null", Toast.LENGTH_SHORT).show();
@@ -101,7 +101,7 @@ public class CreateTable {
             try{
                 database.execSQL(createTableSql);
             } catch (Exception e) {
-                Toast.makeText(context, "한줄평 목록 테이블 생성 실패", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "한줄평 목록 테이블 생성 실패\n" + e.toString(), Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(context, "database is null", Toast.LENGTH_SHORT).show();

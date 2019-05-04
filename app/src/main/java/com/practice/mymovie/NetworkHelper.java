@@ -10,7 +10,8 @@ import static com.practice.mymovie.ConstantKey.NetWorkStatusKey.TYPE_MOBILE;
 import static com.practice.mymovie.ConstantKey.NetWorkStatusKey.TYPE_NOT_CONNECTED;
 import static com.practice.mymovie.ConstantKey.NetWorkStatusKey.TYPE_WIFI;
 
-public class AppHelper {
+public class NetworkHelper {
+
     public static RequestQueue requestQueue;
 
     public static int getNetWorkStatus (Context context) {

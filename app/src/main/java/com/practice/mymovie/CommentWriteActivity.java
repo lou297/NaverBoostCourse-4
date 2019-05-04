@@ -168,7 +168,7 @@ public class CommentWriteActivity extends AppCompatActivity {
                 }
             }
         };
-        AppHelper.requestQueue.add(stringRequest);
+        NetworkHelper.requestQueue.add(stringRequest);
     }
 
     private void processResponse(String response, Comment comment) {
