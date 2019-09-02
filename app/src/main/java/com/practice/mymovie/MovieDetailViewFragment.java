@@ -36,6 +36,7 @@ import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
 import com.practice.mymovie.DataClass.ResponseResult.ResponseResult;
 import com.practice.mymovie.DbHelper.InsertTable;
 import com.practice.mymovie.DbHelper.SelectTable;
+import com.practice.mymovie.GalleryList.MoviePhotosAdapter;
 import com.practice.mymovie.NetWork.NetworkHelper;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.practice.mymovie;
+package com.practice.mymovie.GalleryList;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.practice.mymovie.DataClass.MovieGallery;
+import com.practice.mymovie.R;
 
 import java.util.ArrayList;
 
@@ -69,7 +70,7 @@ public class MoviePhotosAdapter extends RecyclerView.Adapter<MoviePhotosAdapter.
     }
 
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivThumbnail;
         ImageView ivPlayVideo;
 
@@ -105,8 +106,5 @@ public class MoviePhotosAdapter extends RecyclerView.Adapter<MoviePhotosAdapter.
                 ivPlayVideo.setVisibility(View.GONE);
         }
 
-        public void setOnItemClickListener(AdapterView.OnItemClickListener listener) {
-
-        }
     }
 }

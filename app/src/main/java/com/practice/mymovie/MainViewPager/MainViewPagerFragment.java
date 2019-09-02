@@ -82,7 +82,6 @@ public class MainViewPagerFragment extends Fragment {
         //영화 6개에 대한 각각의 정보를 fragment에 전달하여 View를 생성하고,
         // 생성된 View 목록을 ArrayList에 담는다.
         for (MovieMain movie : movieList) {
-            Log.d("test","여기 들어옴");
             MainMovieViewFragment fragment = new MainMovieViewFragment();
 
             Bundle bundle = new Bundle();
