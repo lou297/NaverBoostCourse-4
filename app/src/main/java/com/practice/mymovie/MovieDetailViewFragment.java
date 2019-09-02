@@ -2,10 +2,14 @@ package com.practice.mymovie;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +29,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.practice.mymovie.CommentList.CommentAdapter;
+import com.practice.mymovie.DataClass.MovieGallery;
 import com.practice.mymovie.DataClass.ReadCommentList.Comment;
 import com.practice.mymovie.DataClass.ReadCommentList.ReadCommentList;
 import com.practice.mymovie.DataClass.ReadMovie.MovieDetail;
@@ -54,6 +59,7 @@ public class MovieDetailViewFragment extends Fragment
     private String mMovieId;
     private ArrayList<Comment> mCommentList;
     private CommentAdapter mCommentAdapter;
+    private MoviePhotosAdapter adapter;
 
     private ScrollView svMainContainer;
 
@@ -71,6 +77,7 @@ public class MovieDetailViewFragment extends Fragment
     private TextView tvStoryLine;
     private TextView tvDirector;
     private TextView tvActor;
+    private RecyclerView rvMoviePhotos;
 
     private Button btnThumbUp;
     private TextView tvThumbUpRate;
@@ -225,6 +232,7 @@ public class MovieDetailViewFragment extends Fragment
         tvDirector = view.findViewById(R.id.tvDirector_DetailView);
         tvActor = view.findViewById(R.id.tvActor_DetailView);
         rbMovieCredits = view.findViewById(R.id.rbMovieCredits_DetailView);
+        rvMoviePhotos = view.findViewById(R.id.rvMoviePhotos);
 
         btnThumbUp = view.findViewById(R.id.btnThumbUp);
         tvThumbUpRate = view.findViewById(R.id.tvThumbUpRate);
@@ -297,7 +305,77 @@ public class MovieDetailViewFragment extends Fragment
 
             tvThumbUpRate.setText(String.valueOf(iThumbUpRate));
             tvThumbDownRate.setText(String.valueOf(iThumbDownRate));
+
+            setRecyclerView(mMovie.getPhotos(), mMovie.getVideos());
         }
+    }
+
+    //recyclerView layoutmanager, adapter 설정
+    private void setRecyclerView(String photoUrl, String videoUrl) {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false);
+        rvMoviePhotos.setLayoutManager(layoutManager);
+        adapter = new MoviePhotosAdapter(mActivity);
+
+        if(photoUrl != null)
+            adapter.addImages(parsePhotoUrl(photoUrl));
+        if(videoUrl != null)
+            adapter.addImages(parseVideoUrl(videoUrl));
+
+        rvMoviePhotos.setAdapter(adapter);
+
+        adapter.setOnItemClickListener(new MoviePhotosAdapter.OnItemClickListener() {
+            @Override
+            public void OnItemClick(MoviePhotosAdapter.ViewHolder holder, View view, int position) {
+                MovieGallery gallery = adapter.getGallery(position);
+
+                String imageUrl = gallery.getImageurl();
+                String videoUrl = gallery.getVideoUrl();
+                if(videoUrl == null) {
+                    Intent intent = new Intent(mActivity, PhotoViewAcitivity.class);
+                    intent.putExtra(PHOTO_URL, imageUrl);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl));
+                    startActivity(intent);
+                }
+            }
+        });
+    }
+
+    //','로 나뉘어 있는 이미지 주소 목록을 ArrayList에 담는다.
+    private ArrayList<MovieGallery> parsePhotoUrl (String urls) {
+        String[] urlList = urls.split(",");
+        ArrayList<MovieGallery> galleries = new ArrayList<>();
+
+        for(String url : urlList) {
+            //이미지이므로 videoUrl은 null이다
+
+            Log.d("ImageUrl", url);
+            MovieGallery gallery = new MovieGallery(url, null);
+            galleries.add(gallery);
+        }
+        return galleries;
+    }
+    //비디오 주소를 썸네일 주소로 변화하여 ArrayList에 담는다.
+    private ArrayList<MovieGallery> parseVideoUrl (String videoUrls) {
+        String[] videoUrlList = videoUrls.split(",");
+        ArrayList<MovieGallery> galleries = new ArrayList<>();
+
+        String videoToThumb = "https://img.youtube.com/vi/";
+        String ImageType = "/0.jpg";
+
+        for (String videoUrl : videoUrlList) {
+            int index = videoUrl.indexOf("https://youtu.be/");
+
+            String imageUrl = videoToThumb + videoUrl.substring(index+17) + ImageType;
+
+            Log.d("videoToImageUrl", imageUrl);
+            MovieGallery gallery = new MovieGallery(imageUrl, videoUrl);
+
+            galleries.add(gallery);
+        }
+
+        return galleries;
     }
 
     private void sendRequest(String addUrl, final Map<String, String> params, final int index) {

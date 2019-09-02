@@ -8,4 +8,5 @@ public final class ConstantKey {
     public static final String MOVIE = "MOVIE";
     public static final String ID = "ID";
     public static final String COMMENT = "COMMENT";
+    public static final String PHOTO_URL = "PHOTO_URL";
 }

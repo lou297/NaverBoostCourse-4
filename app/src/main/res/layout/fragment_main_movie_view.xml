@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/main_background"
     android:orientation="vertical">
-
     <ImageView
         android:id="@+id/ivMoviePoster_Main"
         android:layout_width="match_parent"

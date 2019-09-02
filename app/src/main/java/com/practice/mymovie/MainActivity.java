@@ -238,6 +238,9 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, getString(R.string.server_request_success), Toast.LENGTH_SHORT).show();
             InsertTable.updateMovieListTable(this, mMovieList);
         }
+        else {
+            Log.d("test3","들어왔니..");
+        }
     }
 
     private void processRequest_ReadMovie(String response, String id) {

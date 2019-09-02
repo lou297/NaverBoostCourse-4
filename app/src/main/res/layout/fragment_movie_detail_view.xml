@@ -303,7 +303,7 @@
                 android:layout_marginBottom="10dp"
                 android:text="@string/detail_view_director_actor"
                 android:textColor="@color/Dark"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -345,7 +345,27 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/DarkGray" />
             </LinearLayout>
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="15dp"
+            android:padding="10dp"
+            android:background="@color/White">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/movie_gallery"
+                android:textColor="@color/Dark"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvMoviePhotos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
 
@@ -355,7 +375,7 @@
             android:layout_marginBottom="15dp"
             android:background="@color/White"
             android:orientation="vertical"
-            android:padding="15dp">
+            android:padding="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -368,7 +388,7 @@
                     android:layout_weight="7"
                     android:text="@string/all_comment"
                     android:textColor="@color/Dark"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -385,7 +405,7 @@
                     android:layout_weight="2"
                     android:text="@string/all_write_comment"
                     android:textColor="@color/Orange"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
